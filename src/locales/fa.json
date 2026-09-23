@@ -772,5 +772,6 @@
  "{0} in detail": "{0} با جزئیات",
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "درخواست {0} شما به تیم مسئول ارجاع شد. پاسخ ظرف یک روز کاری به {1} ارسال می‌شود.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "یک معمار راهکار از تیم {0} ظرف یک روز کاری با {1} تماس می‌گیرد تا داده‌های نمونه و دامنه جلسه را هماهنگ کند.",
- "enterprise": "سازمانی"
+ "enterprise": "سازمانی",
+ "SIMORGH company logo": "لوگوی شرکت SIMORGH"
 }

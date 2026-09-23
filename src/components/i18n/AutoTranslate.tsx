@@ -30,7 +30,7 @@ type Pattern = { regex: RegExp; slots: number[]; template: string };
 
 const CACHE_PREFIX = 'simorgh-auto-translation:v2:';
 const LEGACY_CACHE_PREFIX = 'simorgh-auto-translation:';
-const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEXTAREA', 'INPUT', 'SVG']);
+const SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEXTAREA', 'SVG']);
 const ATTRIBUTES = ['placeholder', 'aria-label', 'title', 'alt'] as const;
 const API_BATCH = 40;
 
@@ -166,7 +166,8 @@ export function AutoTranslate() {
 
     const applyAttribute = (element: Element, name: string) => {
       const current = element.getAttribute(name);
-      if (current === null || skippedElement(element)) return;
+      // Only opt-outs matter here: an <input>'s or <textarea>'s placeholder is still translated.
+      if (current === null || element.closest('[data-no-translate], svg')) return;
       let slots = attributeSlots.get(element);
       if (!slots) { slots = new Map(); attributeSlots.set(element, slots); }
       const source = sourceOf(slots.get(name), current);
@@ -179,7 +180,7 @@ export function AutoTranslate() {
       if (root.nodeType === Node.TEXT_NODE) { applyText(root as Text); return; }
       if (root.nodeType !== Node.ELEMENT_NODE) return;
       const element = root as Element;
-      if (skippedElement(element)) return;
+      if (element.closest('[data-no-translate], [contenteditable="true"], svg')) return;
       const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
       let node: Node | null;
       while ((node = walker.nextNode())) applyText(node as Text);

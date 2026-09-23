@@ -772,5 +772,6 @@
  "{0} in detail": "{0} بالتفصيل",
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "تمت إحالة استفسارك بشأن {0} إلى الفريق المسؤول. سيصلك الرد على {1} خلال يوم عمل واحد.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "سيتواصل معك مهندس حلول من فريق {0} على {1} خلال يوم عمل واحد للاتفاق على بيانات العينة ونطاق الجلسة.",
- "enterprise": "المؤسسات"
+ "enterprise": "المؤسسات",
+ "SIMORGH company logo": "شعار شركة SIMORGH"
 }

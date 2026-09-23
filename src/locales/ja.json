@@ -772,5 +772,6 @@
  "{0} in detail": "{0}の詳細",
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "{0}に関するお問い合わせを担当チームに転送しました。1 営業日以内に {1} 宛てにご返信します。",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "{0} チームのソリューションアーキテクトが 1 営業日以内に {1} へご連絡し、サンプルデータとセッションの範囲を調整します。",
- "enterprise": "エンタープライズ"
+ "enterprise": "エンタープライズ",
+ "SIMORGH company logo": "SIMORGH 会社ロゴ"
 }

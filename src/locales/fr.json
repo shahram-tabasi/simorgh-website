@@ -772,5 +772,6 @@
  "{0} in detail": "{0} en détail",
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "Votre demande {0} a été transmise à l'équipe responsable. Vous recevrez une réponse à {1} sous un jour ouvré.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "Un architecte de solutions de l'équipe {0} contactera {1} sous un jour ouvré pour convenir des données d'échantillon et du périmètre de la session.",
- "enterprise": "grands comptes"
+ "enterprise": "grands comptes",
+ "SIMORGH company logo": "Logo de la société SIMORGH"
 }

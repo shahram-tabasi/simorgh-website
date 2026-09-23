@@ -772,5 +772,6 @@
  "{0} in detail": "{0}: подробнее",
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "Ваш запрос {0} передан ответственной команде. Ответ придёт на {1} в течение одного рабочего дня.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "Архитектор решений из команды {0} свяжется с вами по адресу {1} в течение одного рабочего дня, чтобы согласовать демонстрационные данные и объём сессии.",
- "enterprise": "корпоративного характера"
+ "enterprise": "корпоративного характера",
+ "SIMORGH company logo": "Логотип компании SIMORGH"
 }
