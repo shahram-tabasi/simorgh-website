@@ -1,0 +1,72 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Vazirmatn:wght@400;500;600;700&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --space-0: #04060e;
+  --space-1: #070b18;
+  --space-2: #0b1226;
+  --line: rgba(120, 160, 255, 0.14);
+  --blue: #2b6bff;
+  --cyan: #2ad3f0;
+  --violet: #7c5cff;
+  --gold: #e8b65a;
+}
+html {
+  scroll-behavior: smooth;
+  background-color: var(--space-0);
+}
+body {
+  background-color: var(--space-0);
+  color: #e7edff;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: rgba(42, 211, 240, 0.28);
+}
+.sim-grid-lines {
+  background-image: linear-gradient(to right, rgba(120, 160, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(120, 160, 255, 0.07) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+.sim-hairline {
+  background: linear-gradient(90deg, transparent, rgba(120, 170, 255, 0.35), transparent);
+}
+@keyframes sim-drift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(0, -40px, 0); }
+}
+@keyframes sim-breathe {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.75; }
+}
+@keyframes sim-dash {
+  to { stroke-dashoffset: -200; }
+}
+.sim-dash {
+  stroke-dasharray: 4 10;
+  animation: sim-dash 6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sim-dash,
+  [data-motion] {
+    animation: none !important;
+  }
+  html { scroll-behavior: auto; }
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #04060e; }
+::-webkit-scrollbar-thumb { background: #16224a; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #22336b; }
+
+html[dir='rtl'] body, body.locale-fa { font-family: 'Vazirmatn', Tahoma, Arial, sans-serif; }
+html[dir='rtl'] .font-display { font-family: 'Vazirmatn', Tahoma, Arial, sans-serif; }
+html[dir='rtl'] .font-mono { font-family: 'Vazirmatn', Tahoma, Arial, sans-serif; }
+html[dir='rtl'] .tracking-label { letter-spacing: 0; }
