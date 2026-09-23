@@ -26,7 +26,7 @@ const slides: ProductSlide[] = ['simorgh-design-suite', 'simorgh-grid', 'simorgh
     return { ...product, ...slideMeta[slug] };
   });
 
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 3000;
 const SWIPE_PX = 50;
 const EASE = 'cubic-bezier(.22,.61,.36,1)';
 
@@ -103,9 +103,7 @@ export function ProductCarousel() {
 
   return (
     <section
-      className="relative overflow-hidden border-y border-cyan/10 bg-[#020916] py-14 lg:py-20"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      className="relative overflow-hidden border-y border-cyan/10 bg-[#020916]/55 py-14 lg:py-20"
       aria-label="Product showcase"
     >
       <div className="pointer-events-none absolute inset-0 opacity-40">
@@ -134,6 +132,9 @@ export function ProductCarousel() {
           className="relative touch-pan-y select-none outline-none"
           style={{ perspective: '1600px' }}
           tabIndex={0}
+          // Holds still only while the pointer is on the deck itself, so the reader can finish a card.
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
