@@ -60,8 +60,7 @@ export function Contact() {
                 <CheckIcon className="h-6 w-6 text-cyan" strokeWidth={1.6} aria-hidden="true" />
                 <h2 className="mt-6 font-display text-2xl font-semibold tracking-tight text-ink">Message sent</h2>
                 <p className="mt-4 max-w-lg text-[14.5px] leading-relaxed text-ink-muted">
-                  Your {kind.toLowerCase()} enquiry has been routed to the responsible team. Expect a reply at{' '}
-                  {form.email} within one working day.
+                  {`Your ${kind.toLowerCase()} enquiry has been routed to the responsible team. Expect a reply at ${form.email} within one working day.`}
                 </p>
               </div> :
 

@@ -41,7 +41,7 @@ export function Footer() {
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-ink-faint">
               {locale === 'fa' ? 'نرم‌افزار هوشمند برای سیستم‌های واقعی؛ هوش مصنوعی، دانش مهندسی و زیرساخت در یک پلتفرم.' : 'Intelligent software for real-world systems — artificial intelligence, engineering knowledge and infrastructure, working as one platform.'}
             </p>
-            <div className="mt-8 flex flex-wrap gap-1.5">
+            <div className="mt-8 flex flex-wrap gap-1.5" data-no-translate>
               {languages.map((l) =>
               <span key={l.code} className="border border-line px-2 py-1 font-mono text-[10px] text-ink-faint">
                   /{l.code}

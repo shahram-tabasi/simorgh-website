@@ -66,8 +66,7 @@ export function RequestDemo() {
                 <CheckIcon className="h-6 w-6 text-cyan" strokeWidth={1.6} aria-hidden="true" />
                 <h2 className="mt-6 font-display text-2xl font-semibold tracking-tight text-ink">Request received</h2>
                 <p className="mt-4 max-w-lg text-[14.5px] leading-relaxed text-ink-muted">
-                  A solution architect from the {form.product || 'platform'} team will contact {form.email} within one
-                  working day to agree the sample data and scope of the session.
+                  {`A solution architect from the ${form.product || 'platform'} team will contact ${form.email} within one working day to agree the sample data and scope of the session.`}
                 </p>
                 <Button variant="outline" className="mt-8" onClick={() => {setForm(initial);setStatus('idle');}}>
                   Submit another request

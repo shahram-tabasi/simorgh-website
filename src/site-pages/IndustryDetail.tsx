@@ -103,7 +103,7 @@ export function IndustryDetail() {
 
           <div className="mt-12 flex flex-col gap-3 sm:flex-row">
             <Button to="/request-demo" size="lg">
-              Discuss a {industry.name} deployment
+              {`Discuss a ${industry.name} deployment`}
             </Button>
             <Button to="/industries" size="lg" variant="outline">
               All industries

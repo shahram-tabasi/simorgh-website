@@ -224,7 +224,7 @@ export function ProductDetail() {
           <div className="mt-16 flex flex-col items-start justify-between gap-6 border border-line bg-space-0 p-10 sm:flex-row sm:items-center">
             <div>
               <h3 className="font-display text-2xl font-semibold tracking-tight text-ink">
-                See {product.short} against your own data
+                {`See ${product.short} against your own data`}
               </h3>
               <p className="mt-3 max-w-xl text-[14.5px] text-ink-muted">
                 Demonstrations are run on a representative sample of your documentation or telemetry, not a canned dataset.

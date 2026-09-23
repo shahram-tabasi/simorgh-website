@@ -80,7 +80,7 @@ export function IndustriesSection() {
                   href={`/industries/${current.slug}`}
                   className="group mt-10 inline-flex items-center gap-2 text-[13.5px] text-cyan-soft">
                   
-                  {current.name} in detail
+                  {`${current.name} in detail`}
                   <ArrowRightIcon
                     className="h-3.5 w-3.5 transition-transform duration-200 ease-sim group-hover:translate-x-1"
                     strokeWidth={1.6} />

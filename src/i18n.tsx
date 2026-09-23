@@ -148,6 +148,21 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+/**
+ * Every string a locale's dictionary already renders, lower-cased. These are
+ * localised at the source, so the page translator must leave them alone
+ * (German "Produkte" is not English waiting to be translated).
+ */
+export function dictionaryValues(locale: Locale) {
+  const values = new Set<string>();
+  const walk = (value: unknown) => {
+    if (typeof value === 'string') values.add(value.replace(/\s+/g, ' ').trim().toLowerCase());
+    else if (value && typeof value === 'object') Object.values(value).forEach(walk);
+  };
+  if (locale !== 'en') walk(dictionaries[locale]);
+  return values;
+}
+
 export function useI18n() {
   return useContext(I18nContext);
 }

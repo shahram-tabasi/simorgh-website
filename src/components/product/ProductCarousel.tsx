@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import type { Product } from '../../types/content';
 import { products } from '../../data/products';
@@ -27,28 +26,80 @@ const slides: ProductSlide[] = ['simorgh-design-suite', 'simorgh-grid', 'simorgh
     return { ...product, ...slideMeta[slug] };
   });
 
-function indexAround(active: number, offset: number) {
-  return (active + offset + slides.length) % slides.length;
+const AUTOPLAY_MS = 6000;
+const SWIPE_PX = 50;
+const EASE = 'cubic-bezier(.22,.61,.36,1)';
+
+// ── The deck ──────────────────────────────────────────────────────────────
+//
+// The same carousel as "Send to EPLAN" in Simorgh Soft: every card is mounted
+// once and stays mounted, and only its place on the curve changes — the one
+// in the middle, the one before and after turned and dimmed at the shoulders,
+// the rest parked behind the centre. Nothing unmounts, so there is no fade to
+// black and no wait for the next image: it is already loaded, it just moves.
+
+/** Where a card sits relative to the active one: 0 centre, ±1 shoulders, else off-stage. */
+function offsetOf(index: number, active: number) {
+  const half = Math.floor(slides.length / 2);
+  let offset = index - active;
+  if (offset > half) offset -= slides.length;
+  if (offset < -half) offset += slides.length;
+  return offset;
+}
+
+function cardStyle(offset: number): React.CSSProperties {
+  if (offset === 0) {
+    return { transform: 'translateX(0) scale(1) rotateY(0deg)', opacity: 1, zIndex: 3 };
+  }
+  const side = offset < 0 ? -1 : 1;
+  if (Math.abs(offset) > 1) {
+    // Off-stage: parked just behind the shoulder on its own side, so coming
+    // back on is a short move inwards rather than a jump across the deck.
+    return { transform: `translateX(${side * 40}%) scale(0.6) rotateY(${side * -18}deg)`, opacity: 0, zIndex: 0, pointerEvents: 'none' };
+  }
+  return {
+    transform: `translateX(${side * 62}%) scale(0.78) rotateY(${side * -18}deg)`,
+    opacity: 0.45,
+    zIndex: 2,
+    filter: 'saturate(0.6)',
+  };
 }
 
 export function ProductCarousel() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const dragStart = useRef<number | null>(null);
+  const swiped = useRef(false);
 
-  const next = useCallback(() => setActive((value) => indexAround(value, 1)), []);
-  const previous = useCallback(() => setActive((value) => indexAround(value, -1)), []);
+  const show = useCallback((n: number) => setActive((n + slides.length) % slides.length), []);
+  const next = useCallback(() => setActive((value) => (value + 1) % slides.length), []);
+  const previous = useCallback(() => setActive((value) => (value - 1 + slides.length) % slides.length), []);
 
+  // Restarts on every change, so a manual step gets a full interval before the next one.
   useEffect(() => {
     if (paused) return;
-    const timer = window.setInterval(next, 6000);
-    return () => window.clearInterval(timer);
-  }, [next, paused]);
+    const timer = window.setTimeout(next, AUTOPLAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [active, paused, next]);
 
-  const positions = useMemo(() => ({
-    previous: slides[indexAround(active, -1)],
-    current: slides[active],
-    next: slides[indexAround(active, 1)],
-  }), [active]);
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') previous();
+    if (event.key === 'ArrowRight') next();
+  };
+
+  const onPointerDown = (event: React.PointerEvent) => { dragStart.current = event.clientX; };
+  const onPointerUp = (event: React.PointerEvent) => {
+    if (dragStart.current === null) return;
+    const delta = event.clientX - dragStart.current;
+    dragStart.current = null;
+    swiped.current = Math.abs(delta) >= SWIPE_PX;
+    if (delta <= -SWIPE_PX) next();
+    else if (delta >= SWIPE_PX) previous();
+  };
+  // A swipe ends on top of a card; it must not also count as a click on it.
+  const onClickCapture = (event: React.MouseEvent) => {
+    if (swiped.current) { event.preventDefault(); event.stopPropagation(); swiped.current = false; }
+  };
 
   return (
     <section
@@ -77,13 +128,98 @@ export function ProductCarousel() {
           </p>
         </div>
 
-        <div className="relative h-[440px] sm:h-[500px] lg:h-[430px]">
-          {/* Desktop side cards */}
+        {/* The stage stays left-to-right in RTL locales too, so "next" always comes in from the right. */}
+        <div
+          dir="ltr"
+          className="relative touch-pan-y select-none outline-none"
+          style={{ perspective: '1600px' }}
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => { dragStart.current = null; }}
+          onClickCapture={onClickCapture}
+        >
+          <div
+            className="relative mx-auto h-[460px] w-[86%] max-w-[860px] sm:h-[420px] sm:w-[80%] lg:h-[400px] lg:w-[62%]"
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            {slides.map((slide, index) => {
+              const offset = offsetOf(index, active);
+              const current = offset === 0;
+              return (
+                <div
+                  key={slide.slug}
+                  aria-hidden={!current}
+                  style={{
+                    ...cardStyle(offset),
+                    transition: `transform .7s ${EASE}, opacity .7s ${EASE}, filter .7s ${EASE}`,
+                  }}
+                  className="absolute inset-0 overflow-hidden rounded-2xl border border-cyan/70 bg-space-1 shadow-[0_25px_70px_-15px_rgba(0,0,0,.8),0_0_70px_rgba(42,211,240,.13)] will-change-transform motion-reduce:!transition-none"
+                >
+                  <Link
+                    href={`/products/${slide.slug}`}
+                    tabIndex={current ? 0 : -1}
+                    draggable={false}
+                    onClick={(event) => {
+                      // A shoulder card is a step, not a link: bring it to the centre first.
+                      if (!current) { event.preventDefault(); show(index); }
+                    }}
+                    className="block h-full"
+                  >
+                    <Image
+                      src={slide.image}
+                      alt={slide.name}
+                      fill
+                      loading="eager"
+                      priority={index === 0}
+                      draggable={false}
+                      sizes="(max-width: 1024px) 88vw, 860px"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#020713]/95 via-[#020713]/65 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#020713]/75 via-transparent to-transparent" />
+
+                    <div
+                      style={{ transition: `opacity .5s ${EASE} ${current ? '.2s' : '0s'}` }}
+                      className={`absolute inset-y-0 left-0 flex w-full max-w-[500px] flex-col justify-center p-6 sm:p-10 lg:p-12 ${current ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      <span className="font-mono text-[9px] font-medium tracking-[0.28em] text-cyan sm:text-[10px]">
+                        {slide.accent}
+                      </span>
+                      <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-white sm:text-4xl" data-no-translate>
+                        {slide.name}
+                      </h2>
+                      <p className="mt-2 text-base font-medium text-cyan sm:text-lg">
+                        {slide.tagline}
+                      </p>
+                      <p className="mt-4 max-w-[430px] text-sm leading-6 text-white/75">
+                        {slide.summary}
+                      </p>
+                      <span className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-cyan bg-blue/80 px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_28px_rgba(43,107,255,.35)] transition hover:bg-cyan hover:text-space-0">
+                        View Details
+                        <ArrowRightIcon className="h-4 w-4" />
+                      </span>
+                    </div>
+
+                    {/* The shoulders carry just the name, so the deck reads at a glance. */}
+                    <div
+                      style={{ transition: `opacity .5s ${EASE}` }}
+                      className={`absolute inset-x-0 bottom-0 hidden p-6 lg:block ${current ? 'opacity-0' : 'opacity-100'}`}
+                    >
+                      <div className="font-display text-xl font-semibold text-white" data-no-translate>{slide.name}</div>
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+
           <button
             type="button"
             onClick={previous}
             aria-label="Previous product"
-            className="absolute left-0 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-cyan/60 bg-space-1/90 text-cyan shadow-[0_0_30px_rgba(42,211,240,.12)] transition hover:bg-cyan hover:text-space-0 lg:flex"
+            className="absolute left-0 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-cyan/60 bg-space-1/90 text-cyan shadow-[0_0_30px_rgba(42,211,240,.12)] backdrop-blur transition hover:bg-cyan hover:text-space-0 lg:flex"
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
@@ -91,97 +227,32 @@ export function ProductCarousel() {
             type="button"
             onClick={next}
             aria-label="Next product"
-            className="absolute right-0 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-cyan/60 bg-space-1/90 text-cyan shadow-[0_0_30px_rgba(42,211,240,.12)] transition hover:bg-cyan hover:text-space-0 lg:flex"
+            className="absolute right-0 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-cyan/60 bg-space-1/90 text-cyan shadow-[0_0_30px_rgba(42,211,240,.12)] backdrop-blur transition hover:bg-cyan hover:text-space-0 lg:flex"
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>
-
-          <div className="absolute inset-0 flex items-center justify-center">
-            <SideCard slide={positions.previous} side="left" />
-            <SideCard slide={positions.next} side="right" />
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={positions.current.slug}
-                initial={{ opacity: 0, scale: .97, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: .985, y: -8 }}
-                transition={{ duration: .45, ease: [0.23, 1, 0.32, 1] }}
-                className="relative z-20 h-[370px] w-full max-w-[860px] overflow-hidden rounded-2xl border border-cyan/70 bg-space-1 shadow-[0_0_70px_rgba(42,211,240,.13)] sm:h-[420px] lg:h-[360px]"
-              >
-                <Link href={`/products/${positions.current.slug}`} className="block h-full">
-                  <Image
-                    src={positions.current.image}
-                    alt={positions.current.name}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 92vw, 860px"
-                    className="object-cover transition-transform duration-700 hover:scale-[1.015]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#020713]/95 via-[#020713]/65 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#020713]/75 via-transparent to-transparent" />
-
-                  <div className="absolute inset-y-0 left-0 flex w-full max-w-[500px] flex-col justify-center p-7 sm:p-10 lg:p-12">
-                    <span className="font-mono text-[9px] font-medium tracking-[0.28em] text-cyan sm:text-[10px]">
-                      {positions.current.accent}
-                    </span>
-                    <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                      {positions.current.name}
-                    </h2>
-                    <p className="mt-2 text-base font-medium text-cyan sm:text-lg">
-                      {positions.current.tagline}
-                    </p>
-                    <p className="mt-4 max-w-[430px] text-sm leading-6 text-white/75">
-                      {positions.current.summary}
-                    </p>
-                    <span className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-cyan bg-blue/80 px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_28px_rgba(43,107,255,.35)] transition hover:bg-cyan hover:text-space-0">
-                      View Details
-                      <ArrowRightIcon className="h-4 w-4" />
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            </AnimatePresence>
-          </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-2">
+        <div dir="ltr" className="mt-8 flex items-center justify-center gap-2">
           {slides.map((slide, index) => (
             <button
               key={slide.slug}
               type="button"
-              aria-label={`Show ${slide.name}`}
+              aria-label={slide.name}
+              title={slide.name}
               aria-current={index === active}
-              onClick={() => setActive(index)}
+              onClick={() => show(index)}
               className={`h-2.5 rounded-full transition-all duration-300 ${index === active ? 'w-7 bg-cyan shadow-[0_0_15px_rgba(42,211,240,.6)]' : 'w-2.5 bg-white/25 hover:bg-white/50'}`}
             />
           ))}
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-3 lg:hidden">
+        <div dir="ltr" className="mt-6 flex items-center justify-center gap-3 lg:hidden">
           <button type="button" onClick={previous} className="rounded-full border border-line p-2 text-cyan" aria-label="Previous product"><ChevronLeftIcon className="h-5 w-5" /></button>
           <span className="font-mono text-[10px] tracking-[0.25em] text-ink-faint">{String(active + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</span>
           <button type="button" onClick={next} className="rounded-full border border-line p-2 text-cyan" aria-label="Next product"><ChevronRightIcon className="h-5 w-5" /></button>
         </div>
       </div>
     </section>
-  );
-}
-
-function SideCard({ slide, side }: { slide: ProductSlide; side: 'left' | 'right' }) {
-  return (
-    <Link
-      href={`/products/${slide.slug}`}
-      className={`absolute top-1/2 z-10 hidden h-[290px] w-[330px] -translate-y-1/2 overflow-hidden rounded-xl border border-cyan/35 bg-space-1 text-left transition hover:border-cyan lg:block ${side === 'left' ? 'left-[4%]' : 'right-[4%]'}`}
-      aria-label={`Open ${slide.name}`}
-    >
-      <Image src={slide.image} alt="" fill sizes="330px" className="object-cover opacity-70" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#020713] via-[#020713]/45 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-6">
-        <div className="font-mono text-[9px] tracking-[0.25em] text-cyan">{slide.domain.toUpperCase()}</div>
-        <div className="mt-2 font-display text-xl font-semibold text-white">{slide.name}</div>
-        <div className="mt-3 inline-flex items-center gap-2 text-xs text-cyan-soft">View Details <ArrowRightIcon className="h-3.5 w-3.5" /></div>
-      </div>
-    </Link>
   );
 }

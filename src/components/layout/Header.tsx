@@ -77,7 +77,7 @@ export function Header() {
                 className="flex h-9 items-center gap-1.5 px-2 text-ink-muted transition-colors duration-150 ease-sim hover:text-ink">
                 
                 <GlobeIcon className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                <span className="font-mono text-[11px] uppercase">{lang}</span>
+                <span className="font-mono text-[11px] uppercase" data-no-translate>{lang}</span>
               </button>
               <AnimatePresence>
                 {langOpen &&
@@ -86,7 +86,8 @@ export function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.16, ease: [0.23, 1, 0.32, 1] }}
-                  className="absolute right-0 top-11 w-44 border border-line bg-space-1 py-1.5">
+                  className="absolute right-0 top-11 w-44 border border-line bg-space-1 py-1.5"
+                  data-no-translate>
                   
                     {languages.map((l) =>
                   <li key={l.code}>
