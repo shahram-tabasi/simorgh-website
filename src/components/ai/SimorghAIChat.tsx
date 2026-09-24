@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../../i18n';
 import { Send, X, Minus } from 'lucide-react';
-import { SimorghMindIcon } from './SimorghMindIcon';
+import Image from 'next/image';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
@@ -48,12 +48,12 @@ export function SimorghAIChat() {
     <div className="fixed bottom-5 end-5 z-[80]" dir="ltr" data-no-translate>
       {!open && <button onClick={() => setOpen(true)} aria-label={copy.open} className="group relative flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan/30 bg-space-1/95 text-cyan shadow-[0_12px_50px_rgba(42,211,240,.18)] backdrop-blur-xl transition hover:-translate-y-1 hover:border-cyan/70">
         <span className="absolute inset-1 rounded-[14px] border border-white/5" />
-        <SimorghMindIcon className="h-9 w-9 transition-transform group-hover:scale-110" />
+        <Image src="/simorgh/logo-mark-192.png" alt="" width={192} height={129} className="h-auto w-10 drop-shadow-[0_0_8px_rgba(160,215,255,0.55)] transition-transform group-hover:scale-110" />
         <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-space-0 bg-cyan" />
       </button>}
       {open && <div className={`w-[min(390px,calc(100vw-32px))] overflow-hidden rounded-2xl border border-line bg-space-1/98 shadow-[0_25px_90px_rgba(0,0,0,.55)] backdrop-blur-xl ${minimized ? 'h-auto' : ''}`}>
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/25 text-cyan"><SimorghMindIcon className="h-6 w-6" /></div><div><div className="text-sm font-semibold text-white">{copy.title}</div><div className="font-mono text-[9px] tracking-[.12em] text-cyan/70">{copy.engine}</div></div></div>
+          <div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/25 text-cyan"><Image src="/simorgh/logo-mark-192.png" alt="" width={192} height={129} className="h-auto w-6" /></div><div><div className="text-sm font-semibold text-white">{copy.title}</div><div className="font-mono text-[9px] tracking-[.12em] text-cyan/70">{copy.engine}</div></div></div>
           <div className="flex gap-1"><button onClick={() => setMinimized(v=>!v)} className="p-2 text-ink-faint hover:text-white" aria-label={copy.minimize}><Minus className="h-4 w-4"/></button><button onClick={() => setOpen(false)} className="p-2 text-ink-faint hover:text-white" aria-label={copy.close}><X className="h-4 w-4"/></button></div>
         </div>
         {!minimized && <><div className="max-h-[430px] space-y-3 overflow-y-auto p-4">

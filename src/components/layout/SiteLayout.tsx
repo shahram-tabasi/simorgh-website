@@ -8,6 +8,7 @@ import { I18nProvider } from '../../i18n';
 import { AutoTranslate } from '../i18n/AutoTranslate';
 import { SimorghAIChat } from '../ai/SimorghAIChat';
 import { Starfield } from '../ui/Starfield';
+import { SimorghFlight } from '../ui/SimorghFlight';
 
 export function SiteLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -29,6 +30,7 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <Footer />
+      <SimorghFlight />
       <SimorghAIChat />
       </div>
     </I18nProvider>);
