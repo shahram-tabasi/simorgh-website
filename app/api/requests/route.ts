@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { listSubmissions, saveSubmissions, type Submission } from '@/src/content/store';
+import { getContent, listSubmissions, saveSubmissions, type Submission } from '@/src/content/store';
+import { notifySubmission } from '@/src/mail/notify';
 
 // Contact and demo-request forms. Saved to storage/requests.json and listed in
 // the admin panel under Requests.
@@ -30,5 +31,8 @@ export async function POST(req: Request) {
   const all = await listSubmissions();
   await saveSubmissions([item, ...all].slice(0, 5000));
   recent.set(ip, [...times, now]);
+  // Tell the team by email; a mail problem never loses the saved request.
+  const to = (await getContent()).settings.notifyEmail;
+  notifySubmission(item, to).catch((e) => console.error('[requests] notification email failed:', e?.message));
   return NextResponse.json({ ok: true });
 }

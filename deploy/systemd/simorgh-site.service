@@ -1,0 +1,19 @@
+# /etc/systemd/system/simorgh-site.service
+# sudo systemctl daemon-reload && sudo systemctl enable --now simorgh-site
+[Unit]
+Description=SIMORGH website (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=simorgh
+WorkingDirectory=/opt/simorgh-website
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+ExecStart=/usr/bin/npm start -- -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

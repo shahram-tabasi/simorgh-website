@@ -6,6 +6,7 @@ import React, { useId, useState } from 'react';
 import { ArrowDownIcon, ArrowUpIcon, ImageIcon, PlusIcon, Trash2Icon, XIcon } from 'lucide-react';
 import type { Seo } from '../../content/types';
 import { MediaPicker } from './MediaPicker';
+import { useAdmin } from './AdminStore';
 
 export const inputCls =
   'w-full rounded-md border border-line bg-space-0/70 px-3 py-2 text-[13.5px] text-ink outline-none transition-colors placeholder:text-ink-faint/60 focus:border-cyan/60';
@@ -237,6 +238,7 @@ export function SeoFields({ value, onChange, fallbackTitle, fallbackDescription,
   value: Seo; onChange: (v: Seo) => void; fallbackTitle: string; fallbackDescription: string; path: string; titleTemplate?: string;
 }) {
   const set = <K extends keyof Seo>(k: K) => (v: Seo[K]) => onChange({ ...value, [k]: v });
+  const host = useAdmin().draft.settings.siteUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '');
   const raw = value.title || fallbackTitle;
   // Same rule as the site: a title that already names SIMORGH is used as is.
   const title = /simorgh/i.test(raw) ? raw : titleTemplate.replace('%s', raw);
@@ -244,7 +246,7 @@ export function SeoFields({ value, onChange, fallbackTitle, fallbackDescription,
   return (
     <Card title="سئو (موتورهای جستجو)" hint="اگر خالی بماند، از عنوان و خلاصه همین صفحه استفاده می‌شود. عنوان حدود ۶۰ و توضیح حدود ۱۵۵ کاراکتر بهترین نتیجه را دارد.">
       <div dir="ltr" className="rounded-lg bg-white p-4 text-left font-sans">
-        <div className="truncate text-[12px] text-[#202124]">simorgh.tech{path}</div>
+        <div className="truncate text-[12px] text-[#202124]">{host}{path}</div>
         <div className="mt-0.5 truncate text-[18px] leading-snug text-[#1a0dab]">{title}</div>
         <div className="mt-1 line-clamp-2 text-[13px] leading-5 text-[#4d5156]">{description}</div>
       </div>

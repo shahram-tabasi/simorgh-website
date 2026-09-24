@@ -59,11 +59,13 @@ export function SettingsEditor() {
         <Grid>
           <Text label="نام سایت" value={draft.settings.siteName} onChange={s('siteName')} ltr />
           <Text label="نام حقوقی شرکت" value={draft.settings.legalName} onChange={s('legalName')} ltr />
-          <Text label="آدرس اصلی سایت (دامنه)" value={draft.settings.siteUrl} onChange={s('siteUrl')} ltr placeholder="https://simorgh.tech"
+          <Text label="آدرس اصلی سایت (دامنه)" value={draft.settings.siteUrl} onChange={s('siteUrl')} ltr placeholder="https://www.simorghai.com"
             hint="بسیار مهم برای سئو: لینک‌های canonical، نقشه سایت و اشتراک‌گذاری از این آدرس ساخته می‌شوند." />
           <Text label="ایمیل" value={draft.settings.email} onChange={s('email')} ltr />
           <Text label="تلفن" value={draft.settings.phone} onChange={s('phone')} ltr />
           <Text label="آدرس" value={draft.settings.address} onChange={s('address')} />
+          <Text label="ایمیل دریافت اعلان فرم‌ها" value={draft.settings.notifyEmail} onChange={s('notifyEmail')} ltr placeholder="sales@simorghai.com"
+            hint="هر پیام «تماس با ما» یا «درخواست دمو» به این آدرس ایمیل هم می‌شود (چند آدرس را با کاما جدا کنید). نیاز به تنظیم SMTP روی سرور دارد." />
         </Grid>
       </Card>
 

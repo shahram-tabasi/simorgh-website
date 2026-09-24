@@ -113,13 +113,15 @@ export interface Article extends Insight {
 
 export interface Settings {
   siteName: string;
-  /** Public address of the site, e.g. https://simorgh.tech — used for canonical links, sitemap and sharing. */
+  /** Public address of the site, e.g. https://www.simorghai.com — used for canonical links, sitemap and sharing. */
   siteUrl: string;
   legalName: string;
   email: string;
   phone: string;
   address: string;
   social: { linkedin: string; x: string; instagram: string; telegram: string; youtube: string; github: string; aparat: string };
+  /** Where contact and demo-request notifications are emailed (comma separated). Empty = none. */
+  notifyEmail: string;
   /** Google Analytics 4 measurement id (G-XXXX). Empty = no analytics. */
   gaId: string;
   verification: { google: string; bing: string; yandex: string };
