@@ -6,18 +6,16 @@ import { usePathname } from 'next/navigation';
 // ── The Simorgh passes ───────────────────────────────────────────────────
 //
 // The bird from the brand film (keyed off its green screen, public/simorgh/)
-// crosses the sky once when a page opens, and is gone. It is not a mascot
-// that hangs around: the reader should only sense that something flew past.
+// crosses the screen in one flight and is gone: it rises in from a lower
+// corner, climbs across turned along its path, and dwindles into the distance
+// out of the opposite upper corner.
 //
-//  • It flies behind the content — between the starfield and the page — so
-//    cards, images and sliders hide parts of it, and it never sits on text.
-//  • One pass per page arrival, only when the page opens at the top. It does
-//    not come back when scrolling up and down.
-//  • It rises in from a lower corner, climbs across, and dwindles into the
-//    distance out of the opposite upper corner, turned along its path.
-//  • Anywhere marked [data-no-simorgh] (the home hero, which has its own
-//    Simorgh, and the company logo) it is not seen at all; a page that opens
-//    covered by such an area gets no pass.
+//  • It flies over the page (under the header and the chat button), so it is
+//    actually seen; it never takes a click.
+//  • It flies when a page opens, and again when the reader scrolls back up
+//    (with a pause between flights).
+//  • Not on the home page, whose hero already has its Simorgh; and it fades
+//    out over anything marked [data-no-simorgh] (the company logo).
 //  • prefers-reduced-motion: no bird.
 
 type Vec = { x: number; y: number };
@@ -28,6 +26,8 @@ const ART_HEADING = Math.atan2(-0.9, 0.42); // the film's bird climbs up and to 
 const TAIL = { x: -0.14, y: 0.43 };     // tail tip relative to the centre, in bird widths
 const PASS_SECONDS = 5.2;
 const START_DELAY = 650;
+const COOLDOWN = 9000;      // ms between flights
+const SCROLL_UP_TRIGGER = 320; // px of upward scrolling that calls the bird
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
@@ -78,16 +78,19 @@ export function SimorghFlight() {
     const ctx = canvas?.getContext('2d');
     if (!bird || !canvas || !ctx) return;
 
+    if (pathname === '/') return;
     let frame = 0;
     let cancelled = false;
+    let flying = false;
+    let lastFlight = -Infinity;
 
     const start = () => {
-      if (cancelled || window.scrollY > 120) return;
+      if (cancelled || flying || performance.now() - lastFlight < COOLDOWN) return;
+      flying = true;
+      lastFlight = performance.now();
       const W = window.innerWidth;
       const H = window.innerHeight;
       const zonesAt = () => [...document.querySelectorAll('[data-no-simorgh]')].map((el) => el.getBoundingClientRect());
-      // A page that opens under a no-Simorgh area (the home hero) gets no pass.
-      if (hiddenBy(zonesAt(), 0, 0, W, H) > 0.5) return;
 
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(W * dpr);
@@ -133,7 +136,7 @@ export function SimorghFlight() {
 
         const fade = Math.min(1, t / 0.1) * Math.min(1, (1 - t) / 0.22);
         const hidden = hiddenBy(zonesAt(), pos.x - width / 2, pos.y - height / 2, width, height);
-        const opacity = 0.78 * fade * (1 - Math.min(1, hidden * 2.5));
+        const opacity = 0.92 * fade * (1 - Math.min(1, hidden * 2.5));
 
         bird.style.transform =
           `translate3d(${pos.x - base / 2}px, ${pos.y - (base * ART_ASPECT) / 2}px, 0) rotate(${rot}rad) scale(${depth * side}, ${depth})`;
@@ -171,16 +174,29 @@ export function SimorghFlight() {
         ctx.globalCompositeOperation = 'source-over';
 
         if (t < 1 || sparks.length) frame = requestAnimationFrame(step);
-        else { bird.style.opacity = '0'; video?.pause(); ctx.clearRect(0, 0, W, H); }
+        else { bird.style.opacity = '0'; video?.pause(); ctx.clearRect(0, 0, W, H); flying = false; lastFlight = performance.now(); }
       };
       frame = requestAnimationFrame(step);
     };
 
     // Give the new page a moment to lay out, then fly.
     const timer = window.setTimeout(start, START_DELAY);
+
+    // Scrolling back up calls it again.
+    let lastY = window.scrollY;
+    let upward = 0;
+    const onScroll = () => {
+      const y = window.scrollY;
+      upward = y < lastY ? upward + (lastY - y) : 0;
+      lastY = y;
+      if (upward > SCROLL_UP_TRIGGER) { upward = 0; start(); }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(frame);
       bird.style.opacity = '0';
       videoRef.current?.pause();
@@ -191,8 +207,8 @@ export function SimorghFlight() {
   if (!media) return null;
 
   return (
-    // Behind the page: between the site-wide sky (-z-10) and the content.
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-[5] overflow-hidden" data-no-translate>
+    // Over the page, under the header (z-50) and the chat button.
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[40] overflow-hidden" data-no-translate>
       <canvas ref={trailRef} className="absolute inset-0 h-full w-full" />
       <div
         ref={birdRef}

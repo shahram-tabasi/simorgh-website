@@ -9,6 +9,7 @@ import { AutoTranslate } from '../i18n/AutoTranslate';
 import { SimorghAIChat } from '../ai/SimorghAIChat';
 import { Starfield } from '../ui/Starfield';
 import { SimorghFlight } from '../ui/SimorghFlight';
+import { MeteorShower } from '../ui/MeteorShower';
 
 export function SiteLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,7 +22,7 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
     <I18nProvider>
       {/* The site-wide sky: fixed behind everything, seen through the translucent sections. */}
       <div aria-hidden="true" className="sim-sky pointer-events-none fixed inset-0 -z-10">
-        <Starfield fixed meteorEvery={[6, 13]} />
+        <Starfield fixed />
       </div>
       <div className="relative flex min-h-screen w-full flex-col">
       <Header />
@@ -30,6 +31,7 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <Footer />
+      <MeteorShower />
       <SimorghFlight />
       <SimorghAIChat />
       </div>

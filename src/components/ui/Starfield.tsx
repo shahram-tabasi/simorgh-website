@@ -6,7 +6,7 @@ interface Props {
   /** Stars per square pixel. */
   density?: number;
   className?: string;
-  /** Occasional shooting stars. */
+  /** Occasional shooting stars (off by default: MeteorShower draws them over the page). */
   meteors?: boolean;
   /** Seconds between meteors: a random wait in [min, max]. */
   meteorEvery?: [number, number];
@@ -66,7 +66,7 @@ function randomStar(z = Math.random() * DEPTH + 0.05): Star {
   };
 }
 
-export function Starfield({ density = 0.00032, className = '', meteors = true, meteorEvery = DEFAULT_METEOR_EVERY, fixed = false }: Props) {
+export function Starfield({ density = 0.00032, className = '', meteors = false, meteorEvery = DEFAULT_METEOR_EVERY, fixed = false }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
