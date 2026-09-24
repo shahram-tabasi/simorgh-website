@@ -23,7 +23,7 @@ interface Props {
 //
 // Colours follow real stellar temperatures (blue-white O/B through orange
 // K/M), and each star scintillates at its own rate. Now and then a meteor
-// crosses. Honours prefers-reduced-motion: a still sky, no meteors.
+// crosses.
 
 type Star = { x: number; y: number; z: number; size: number; tint: number; alpha: number; freq: number; phase: number; flare: boolean };
 type Meteor = { x: number; y: number; vx: number; vy: number; length: number; life: number; age: number; width: number };
@@ -74,7 +74,10 @@ export function Starfield({ density = 0.00032, className = '', meteors = false, 
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The sky is the site's signature, so it moves even when the OS asks for
+    // reduced motion (Windows turns that on with "Animation effects" off); the
+    // motion is slow drift and twinkle, nothing that sweeps across the screen.
+    const reduced = false;
     const sprites = makeSprites();
     let width = 0;
     let height = 0;

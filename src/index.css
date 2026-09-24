@@ -90,6 +90,21 @@ html[dir='rtl'] .tracking-label { letter-spacing: 0; }
 main .bg-space-0 { background-color: rgb(4 6 14 / 0.38); }
 main .bg-space-1 { background-color: rgb(7 11 24 / 0.55); }
 footer.bg-space-1 { background-color: rgb(7 11 24 / 0.6); }
-@media (prefers-reduced-motion: reduce) {
-  .sim-sky { animation: none; }
+
+/* The header Simorgh riding the air: a slow figure-eight that also comes a
+   little nearer and falls back, with the body banking into each turn. */
+.sim-hero-bird {
+  animation: sim-hero-bird 16s ease-in-out infinite;
+  transform-origin: 50% 55%;
+  will-change: transform;
+}
+@keyframes sim-hero-bird {
+  0%   { transform: translate(0, 0) rotate(-2deg) scale(1); }
+  15%  { transform: translate(-7%, -9%) rotate(-7deg) scale(0.93); }
+  30%  { transform: translate(-13%, -2%) rotate(-3deg) scale(0.88); }
+  45%  { transform: translate(-6%, 8%) rotate(4deg) scale(0.95); }
+  60%  { transform: translate(6%, 4%) rotate(6deg) scale(1.04); }
+  75%  { transform: translate(11%, -6%) rotate(1deg) scale(1.02); }
+  90%  { transform: translate(5%, -3%) rotate(-3deg) scale(1); }
+  100% { transform: translate(0, 0) rotate(-2deg) scale(1); }
 }

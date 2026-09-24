@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ChevronRightIcon } from 'lucide-react';
 import { Starfield } from './Starfield';
+import { HeroSimorgh } from './HeroSimorgh';
 
 interface Crumb {
   label: string;
@@ -29,6 +30,7 @@ export function PageHero({ eyebrow, title, lead, crumbs = [], image, children }:
         </div>
       }
       <Starfield className="opacity-60" />
+      <HeroSimorgh />
 
       <div className="relative mx-auto max-w-shell px-5 py-20 lg:px-10 lg:py-28">
         {crumbs.length > 0 &&

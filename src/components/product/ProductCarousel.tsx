@@ -157,7 +157,7 @@ export function ProductCarousel() {
                     ...cardStyle(offset),
                     transition: `transform .7s ${EASE}, opacity .7s ${EASE}, filter .7s ${EASE}`,
                   }}
-                  className="absolute inset-0 overflow-hidden rounded-2xl border border-cyan/70 bg-space-1 shadow-[0_25px_70px_-15px_rgba(0,0,0,.8),0_0_70px_rgba(42,211,240,.13)] will-change-transform motion-reduce:!transition-none"
+                  className="absolute inset-0 overflow-hidden rounded-2xl border border-cyan/70 bg-space-1 shadow-[0_25px_70px_-15px_rgba(0,0,0,.8),0_0_70px_rgba(42,211,240,.13)] will-change-transform"
                 >
                   <Link
                     href={`/products/${slide.slug}`}

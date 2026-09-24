@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react';
 // they are seen whatever sits beneath: hero images, cards, sliders. Rare
 // enough to stay a surprise — one every few seconds, now and then a pair —
 // and bright enough to be noticed: a white-hot head, a glow, a long cooling
-// tail. Nothing under prefers-reduced-motion.
+// tail.
 
 type Meteor = { x: number; y: number; vx: number; vy: number; length: number; life: number; age: number; width: number };
 
@@ -18,7 +18,7 @@ export function MeteorShower() {
   useEffect(() => {
     const canvas = ref.current;
     const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!canvas || !ctx) return;
 
     let W = 0;
     let H = 0;

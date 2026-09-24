@@ -8,7 +8,6 @@ import { I18nProvider } from '../../i18n';
 import { AutoTranslate } from '../i18n/AutoTranslate';
 import { SimorghAIChat } from '../ai/SimorghAIChat';
 import { Starfield } from '../ui/Starfield';
-import { SimorghFlight } from '../ui/SimorghFlight';
 import { MeteorShower } from '../ui/MeteorShower';
 
 export function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -32,7 +31,6 @@ export function SiteLayout({ children }: { children: React.ReactNode }) {
       </main>
       <Footer />
       <MeteorShower />
-      <SimorghFlight />
       <SimorghAIChat />
       </div>
     </I18nProvider>);
