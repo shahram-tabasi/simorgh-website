@@ -21,7 +21,7 @@ export function Hero() {
   const { media } = slide;
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] w-full overflow-hidden bg-space-0" aria-label="SIMORGH">
+    <section ref={ref} className="relative min-h-[100svh] w-full overflow-hidden bg-space-0" aria-label="SIMORGH" data-no-simorgh>
       {/* Media layer — mobile gets its own composition band, desktop is full bleed 16:9 */}
       <motion.div
         style={{ y: mediaY, scale: mediaScale }}

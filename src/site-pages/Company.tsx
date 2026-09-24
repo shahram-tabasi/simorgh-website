@@ -40,7 +40,7 @@ export function Company() {
               index="ABOUT"
               title="Engineers who write software, not the other way round"
               lead="SIMORGH was founded by electrical and industrial engineers who kept running into the same wall: the knowledge required to make a decision existed, but not in a form any system could use. The platform is the answer to that." />
-            <div className="relative mx-auto w-full max-w-[340px] overflow-hidden rounded-2xl border border-line bg-[#07132a] shadow-[0_0_80px_rgba(232,182,90,.12)]">
+            <div data-no-simorgh className="relative mx-auto w-full max-w-[340px] overflow-hidden rounded-2xl border border-line bg-[#07132a] shadow-[0_0_80px_rgba(232,182,90,.12)]">
               <Image src="/company.jpg" alt="SIMORGH company logo" width={481} height={442} className="h-auto w-full" />
             </div>
           </Reveal>
