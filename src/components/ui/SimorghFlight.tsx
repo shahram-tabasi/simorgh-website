@@ -41,13 +41,6 @@ function bezier(p: Vec[], t: number): Vec {
   };
 }
 
-/** Safari plays WebM but drops its alpha channel, so it gets the animated WebP instead. */
-function supportsAlphaVideo() {
-  const ua = navigator.userAgent;
-  const safari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(ua);
-  return !safari && document.createElement('video').canPlayType('video/webm; codecs="vp9"') !== '';
-}
-
 /** How much of the rectangle is covered by a visible [data-no-simorgh] area (0..1). */
 function hiddenBy(zones: DOMRect[], x: number, y: number, w: number, h: number) {
   let covered = 0;
@@ -62,17 +55,16 @@ function hiddenBy(zones: DOMRect[], x: number, y: number, w: number, h: number) 
 export function SimorghFlight() {
   const pathname = usePathname();
   const birdRef = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const trailRef = useRef<HTMLCanvasElement | null>(null);
-  const [media, setMedia] = useState<'video' | 'image' | null>(null);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    setMedia(supportsAlphaVideo() ? 'video' : 'image');
+    setEnabled(true);
   }, []);
 
   useEffect(() => {
-    if (!media) return;
+    if (!enabled) return;
     const bird = birdRef.current;
     const canvas = trailRef.current;
     const ctx = canvas?.getContext('2d');
@@ -114,8 +106,6 @@ export function SimorghFlight() {
       let sparks: Spark[] = [];
       let t = 0;
       let last = performance.now();
-      const video = videoRef.current;
-      if (video) { video.currentTime = 0; video.playbackRate = 1.2; video.play().catch(() => {}); }
 
       const step = (now: number) => {
         const dt = Math.min((now - last) / 1000, 0.05);
@@ -174,7 +164,7 @@ export function SimorghFlight() {
         ctx.globalCompositeOperation = 'source-over';
 
         if (t < 1 || sparks.length) frame = requestAnimationFrame(step);
-        else { bird.style.opacity = '0'; video?.pause(); ctx.clearRect(0, 0, W, H); flying = false; lastFlight = performance.now(); }
+        else { bird.style.opacity = '0'; ctx.clearRect(0, 0, W, H); flying = false; lastFlight = performance.now(); }
       };
       frame = requestAnimationFrame(step);
     };
@@ -199,12 +189,11 @@ export function SimorghFlight() {
       window.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(frame);
       bird.style.opacity = '0';
-      videoRef.current?.pause();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
-  }, [media, pathname]);
+  }, [enabled, pathname]);
 
-  if (!media) return null;
+  if (!enabled) return null;
 
   return (
     // Over the page, under the header (z-50) and the chat button.
@@ -215,21 +204,10 @@ export function SimorghFlight() {
         className="absolute left-0 top-0 origin-center mix-blend-screen will-change-transform"
         style={{ width: 'clamp(220px, 30vw, 440px)', opacity: 0 }}
       >
-        {media === 'video' ? (
-          <video
-            ref={videoRef}
-            src="/simorgh/simorgh-flight.webm"
-            muted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
-            className="block h-auto w-full"
-          />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src="/simorgh/simorgh-flight.webp" alt="" className="block h-auto w-full" />
-        )}
+        {/* The animated WebP (keyed, with alpha) plays in every browser without autoplay rules or codec
+            support; it starts loading as soon as the site does, ready for the first flight. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/simorgh/simorgh-flight.webp" alt="" loading="eager" decoding="async" className="block h-auto w-full" />
       </div>
     </div>
   );

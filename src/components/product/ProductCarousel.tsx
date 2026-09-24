@@ -129,6 +129,7 @@ export function ProductCarousel() {
         {/* The stage stays left-to-right in RTL locales too, so "next" always comes in from the right. */}
         <div
           dir="ltr"
+          data-no-simorgh
           className="relative touch-pan-y select-none outline-none"
           style={{ perspective: '1600px' }}
           tabIndex={0}
