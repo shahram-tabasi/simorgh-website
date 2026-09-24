@@ -7,9 +7,10 @@ import { ArrowRightIcon } from 'lucide-react';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
 import { Icon } from '../ui/Icon';
-import { industries } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 
 export function IndustriesSection() {
+  const { industries } = useContent();
   const shortlist = industries.slice(0, 6);
   const [active, setActive] = useState(0);
   const current = shortlist[active];

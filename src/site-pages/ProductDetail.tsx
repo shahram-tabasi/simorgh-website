@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
-import { ArrowRightIcon, CheckIcon } from 'lucide-react';
+import { notFound } from 'next/navigation';
+import { ArrowRightIcon, CheckIcon, FileTextIcon } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { SectionHeader } from '../components/ui/SectionHeader';
 import { Reveal } from '../components/ui/Reveal';
@@ -12,8 +12,7 @@ import { Icon } from '../components/ui/Icon';
 import { Pipeline } from '../components/product/Pipeline';
 import { FaqList } from '../components/product/FaqList';
 import { ProductPreview } from '../components/product/ProductPreview';
-import { getProduct, products } from '../data/products';
-import { REF_IMAGE_NEURAL } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 const previewRows: Record<string, {label: string;value: string;state?: 'ok' | 'warn' | 'alert';}[]> = {
   'simorgh-design-suite': [
@@ -67,14 +66,16 @@ const previewRows: Record<string, {label: string;value: string;state?: 'ok' | 'w
 
 };
 
-export function ProductDetail() {
-  const { slug = '' } = useParams();
-  const product = getProduct(Array.isArray(slug) ? slug[0] : slug);
+export function ProductDetail({ slug }: { slug: string }) {
+  const { products } = useContent();
+  const product = products.find((p) => p.slug === slug);
 
   if (!product) notFound();
 
   const related = products.filter((p) => p.slug !== product.slug).slice(0, 3);
   const rows = previewRows[product.slug] ?? [];
+  const gallery = product.gallery.filter(Boolean);
+  const schematics = product.schematics.filter((s) => s.src);
 
   return (
     <>
@@ -83,7 +84,7 @@ export function ProductDetail() {
         title={product.name}
         lead={product.tagline}
         crumbs={[{ label: 'Products', to: '/products' }, { label: product.short }]}
-        image={REF_IMAGE_NEURAL}>
+        image={product.headerImage || product.image}>
         
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <Button to="/request-demo" size="lg">
@@ -188,6 +189,53 @@ export function ProductDetail() {
           </Reveal>
         </div>
       </section>
+
+      {/* Gallery and schematics: shown only when the admin has added some. */}
+      {gallery.length > 0 &&
+      <section className="border-b border-line bg-space-1">
+          <div className="mx-auto max-w-shell px-5 py-20 lg:px-10 lg:py-24">
+            <Reveal>
+              <SectionHeader index="GALLERY" title="Product gallery" />
+            </Reveal>
+            <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {gallery.map((src) =>
+            <li key={src} className="overflow-hidden rounded-lg border border-line bg-space-0">
+                  <a href={src} target="_blank" rel="noopener" className="block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt={product.name} loading="lazy" className="aspect-[4/3] w-full object-contain p-2 transition-transform duration-300 ease-sim hover:scale-[1.03]" />
+                  </a>
+                </li>
+            )}
+            </ul>
+          </div>
+        </section>
+      }
+
+      {schematics.length > 0 &&
+      <section className="border-b border-line bg-space-0">
+          <div className="mx-auto max-w-shell px-5 py-20 lg:px-10 lg:py-24">
+            <Reveal>
+              <SectionHeader index="SCHEMATICS" title="Diagrams and schematics" />
+            </Reveal>
+            <ul className="mt-12 grid gap-6 lg:grid-cols-2">
+              {schematics.map((sch) =>
+            <li key={sch.src} className="overflow-hidden rounded-lg border border-line bg-space-1">
+                  <a href={sch.src} target="_blank" rel="noopener" className="block bg-white/[0.02]">
+                    {/\.pdf$/i.test(sch.src) ?
+                <span className="flex items-center gap-3 px-5 py-10 text-[14px] text-cyan-soft">
+                        <FileTextIcon className="h-6 w-6" strokeWidth={1.4} /> PDF
+                      </span> :
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={sch.src} alt={sch.caption || product.name} loading="lazy" className="max-h-[520px] w-full object-contain p-3" />
+                }
+                  </a>
+                  {sch.caption && <p className="border-t border-line px-5 py-4 text-[13.5px] text-ink-muted">{sch.caption}</p>}
+                </li>
+            )}
+            </ul>
+          </div>
+        </section>
+      }
 
       {/* FAQ */}
       <section className="border-b border-line bg-space-0">

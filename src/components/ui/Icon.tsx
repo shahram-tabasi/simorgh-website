@@ -20,6 +20,7 @@ const registry: Record<string, LucideIcon> = {
   mining: PickaxeIcon,
   bridge: RouteIcon
 };
+export const iconNames = Object.keys(registry);
 interface IconProps {
   name: string;
   className?: string;

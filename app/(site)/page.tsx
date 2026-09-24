@@ -1,3 +1,8 @@
 import { Home } from '@/src/site-pages/Home';
+import { pageMetadata } from '@/src/seo/metadata';
 
-export default function Page() { return <Home />; }
+export const generateMetadata = pageMetadata('home');
+
+export default function Page() {
+  return <Home />;
+}

@@ -773,5 +773,11 @@
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "Tu consulta {0} se ha enviado al equipo responsable. Recibirás una respuesta en {1} en un plazo de un día hábil.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "Un arquitecto de soluciones del equipo de {0} se pondrá en contacto con {1} en un plazo de un día hábil para acordar los datos de muestra y el alcance de la sesión.",
  "enterprise": "empresarial",
- "SIMORGH company logo": "Logotipo de la empresa SIMORGH"
+ "SIMORGH company logo": "Logotipo de la empresa SIMORGH",
+ "GALLERY": "GALERÍA",
+ "Product gallery": "Galería del producto",
+ "SCHEMATICS": "ESQUEMAS",
+ "Diagrams and schematics": "Diagramas y esquemas",
+ "The message could not be sent. Please try again, or email us directly.": "No se pudo enviar el mensaje. Inténtelo de nuevo o escríbanos directamente por correo electrónico.",
+ "Talk to the engineers behind the platform about your network, your plant or your city.": "Hable con los ingenieros que están detrás de la plataforma sobre su red, su planta o su ciudad."
 }

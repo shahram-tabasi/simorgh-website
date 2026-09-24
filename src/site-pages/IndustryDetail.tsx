@@ -2,19 +2,18 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { ArrowRightIcon } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { SectionHeader } from '../components/ui/SectionHeader';
 import { Reveal } from '../components/ui/Reveal';
 import { Button } from '../components/ui/Button';
 import { Icon } from '../components/ui/Icon';
-import { getIndustry, caseStudies, REF_IMAGE_NEURAL } from '../data/site';
-import { products } from '../data/products';
+import { useContent } from '../content/ContentProvider';
 
-export function IndustryDetail() {
-  const { slug = '' } = useParams();
-  const industry = getIndustry(Array.isArray(slug) ? slug[0] : slug);
+export function IndustryDetail({ slug }: { slug: string }) {
+  const { products, industries, caseStudies, pages } = useContent();
+  const industry = industries.find((i) => i.slug === slug);
 
   if (!industry) notFound();
 
@@ -29,7 +28,7 @@ export function IndustryDetail() {
         title={industry.name}
         lead={industry.lead}
         crumbs={[{ label: 'Industries', to: '/industries' }, { label: industry.name }]}
-        image={REF_IMAGE_NEURAL} />
+        image={industry.image || pages.industries.heroImage} />
       
 
       <section className="border-b border-line bg-space-0">

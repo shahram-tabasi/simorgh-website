@@ -3,9 +3,10 @@
 import React from 'react';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
-import { caseStudies } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 
 export function CaseStudiesSection() {
+  const { caseStudies } = useContent();
   return (
     <section className="relative w-full border-t border-line bg-space-0" aria-label="Case studies">
       <div className="mx-auto max-w-shell px-5 py-24 lg:px-10 lg:py-32">

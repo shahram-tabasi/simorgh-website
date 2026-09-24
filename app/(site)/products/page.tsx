@@ -1,3 +1,8 @@
 import { Products } from '@/src/site-pages/Products';
+import { pageMetadata } from '@/src/seo/metadata';
 
-export default function Page() { return <Products />; }
+export const generateMetadata = pageMetadata('products');
+
+export default function Page() {
+  return <Products />;
+}

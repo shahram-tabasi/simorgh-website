@@ -6,9 +6,10 @@ import { ArrowRightIcon } from 'lucide-react';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
 import { Icon } from '../ui/Icon';
-import { products } from '../../data/products';
+import { useContent } from '../../content/ContentProvider';
 
 export function ProductsSection() {
+  const { products } = useContent();
   const featured = products.filter((p) => p.featured);
   const rest = products.filter((p) => !p.featured);
 

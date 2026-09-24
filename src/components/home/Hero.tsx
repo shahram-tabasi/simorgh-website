@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 import { ArrowRightIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Starfield } from '../ui/Starfield';
-import { activeHero } from '../../data/hero';
+import { useContent } from '../../content/ContentProvider';
 import { useI18n } from '../../i18n';
 
 export function Hero() {
@@ -16,9 +16,19 @@ export function Hero() {
   const mediaScale = useTransform(scrollYProgress, [0, 1], [1, reduced ? 1 : 1.06]);
   const copyOpacity = useTransform(scrollYProgress, [0, 0.7], [1, reduced ? 1 : 0]);
 
-  const { t } = useI18n();
-  const slide = activeHero;
-  const { media } = slide;
+  const { locale } = useI18n();
+  const { hero } = useContent();
+  const text = hero.text[locale] ?? hero.text.en;
+  const isVideo = /\.(mp4|webm)(\?|$)/i.test(hero.image);
+  const media = {
+    type: isVideo ? 'video' : 'image',
+    desktop: hero.image,
+    tablet: hero.image,
+    mobile: hero.mobileImage || hero.image,
+    videoMp4: /\.mp4/i.test(hero.image) ? hero.image : undefined,
+    videoWebm: /\.webm/i.test(hero.image) ? hero.image : undefined,
+    focal: hero.focal,
+  };
 
   return (
     <section ref={ref} className="relative min-h-[100svh] w-full overflow-hidden bg-space-0" aria-label="SIMORGH" data-no-simorgh>
@@ -35,7 +45,7 @@ export function Hero() {
           muted
           loop
           playsInline
-          poster={media.desktop}>
+          poster={hero.mobileImage || undefined}>
           
             {media.videoWebm && <source src={media.videoWebm} type="video/webm" />}
             {media.videoMp4 && <source src={media.videoMp4} type="video/mp4" />}
@@ -60,7 +70,7 @@ export function Hero() {
       {/* Scrims: vertical on mobile, directional on desktop so the Simorgh stays uncovered */}
       <div
         className="absolute inset-0 bg-gradient-to-t from-space-0 via-space-0/70 to-transparent lg:bg-gradient-to-r lg:from-space-0 lg:via-space-0/55 lg:to-transparent"
-        style={{ opacity: slide.overlay + 0.35 }} />
+        style={{ opacity: hero.overlay + 0.35 }} />
       
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-space-0 to-transparent" />
       <div className="pointer-events-none absolute inset-0 hidden lg:block lg:bg-[radial-gradient(60%_50%_at_58%_45%,rgba(42,211,240,0.10),transparent_70%)]" />
@@ -74,7 +84,7 @@ export function Hero() {
             className="flex items-center justify-center gap-3">
             
             <span className="h-px w-8 bg-cyan" />
-            <span className="font-mono text-[10.5px] tracking-label text-cyan">{t.hero.eyebrow}</span>
+            <span className="font-mono text-[10.5px] tracking-label text-cyan">{text.eyebrow}</span>
           </motion.div>
 
           <motion.h1
@@ -83,9 +93,9 @@ export function Hero() {
             transition={{ duration: 0.34, delay: 0.06, ease: [0.23, 1, 0.32, 1] }}
             className="mt-6 font-display text-[40px] font-semibold leading-[1.03] tracking-tight text-white sm:text-[54px] lg:text-[68px]">
             
-            {t.hero.headline}
+            {text.headline}
             <span className="block text-transparent [-webkit-background-clip:text] [background-clip:text] [background-image:linear-gradient(92deg,#7ce6f7,#5c8dff_55%,#a48bff)]">
-              {t.hero.accent}
+              {text.accent}
             </span>
           </motion.h1>
 
@@ -95,7 +105,7 @@ export function Hero() {
             transition={{ duration: 0.34, delay: 0.12, ease: [0.23, 1, 0.32, 1] }}
             className="mx-auto mt-7 max-w-2xl text-[15px] leading-relaxed text-ink-muted sm:text-[17px]">
             
-            {t.hero.subtitle}
+            {text.subtitle}
           </motion.p>
 
           <motion.div
@@ -104,12 +114,12 @@ export function Hero() {
             transition={{ duration: 0.34, delay: 0.18, ease: [0.23, 1, 0.32, 1] }}
             className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:items-center">
             
-            <Button to={slide.primaryCta.to} size="lg">
-              {t.hero.primary}
+            <Button to={hero.primaryTo} size="lg">
+              {text.primary}
               <ArrowRightIcon className="h-4 w-4" strokeWidth={1.6} />
             </Button>
-            <Button to={slide.secondaryCta.to} size="lg" variant="outline">
-              {t.hero.secondary}
+            <Button to={hero.secondaryTo} size="lg" variant="outline">
+              {text.secondary}
             </Button>
           </motion.div>
 
@@ -119,7 +129,7 @@ export function Hero() {
             transition={{ duration: 0.4, delay: 0.26 }}
             className="mt-12 font-mono text-[10.5px] tracking-label text-ink-faint">
             
-            {t.hero.kicker}
+            {text.kicker}
           </motion.div>
         </motion.div>
       </div>

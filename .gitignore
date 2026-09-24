@@ -50,3 +50,6 @@ public/SIMORGH(The Origin of our name).mp4
 
 # Large video
 public/SIMORGH(The Origin of our name).mp4
+
+# Admin content, uploads, backups and form submissions (back this folder up)
+storage/

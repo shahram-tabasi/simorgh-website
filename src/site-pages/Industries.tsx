@@ -6,9 +6,10 @@ import { ArrowRightIcon } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { Icon } from '../components/ui/Icon';
 import { Reveal } from '../components/ui/Reveal';
-import { industries, REF_IMAGE_PLANET } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 export function Industries() {
+  const { pages, industries } = useContent();
   return (
     <>
       <PageHero
@@ -16,7 +17,8 @@ export function Industries() {
         title="Intelligence for Real-World Systems"
         lead="Nine sectors where documentation, physical assets and operational decisions collide — and where a generic AI product is of no use."
         crumbs={[{ label: 'Industries' }]}
-        image={REF_IMAGE_PLANET} />
+        image={pages.industries.heroImage}
+        flip={pages.industries.heroFlip} />
       
 
       <section className="bg-space-0">

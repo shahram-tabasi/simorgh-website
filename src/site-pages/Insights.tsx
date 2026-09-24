@@ -1,14 +1,16 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useMemo, useState } from 'react';
 import { PlayIcon, FileTextIcon } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { Reveal } from '../components/ui/Reveal';
-import { insights, REF_IMAGE_BIRD } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 const categories = ['All', 'AI', 'Industrial AI', 'Digital Twin', 'Smart Grid', 'Engineering', 'Software'];
 
 export function Insights() {
+  const { pages, articles: insights } = useContent();
   const [category, setCategory] = useState('All');
 
   const filtered = useMemo(
@@ -23,7 +25,8 @@ export function Insights() {
         title="Insights"
         lead="Technical articles, case studies, recorded walkthroughs and whitepapers from the engineering teams building SIMORGH."
         crumbs={[{ label: 'Insights' }]}
-        image={REF_IMAGE_BIRD} />
+        image={pages.insights.heroImage}
+        flip={pages.insights.heroFlip} />
       
 
       <section className="bg-space-0">
@@ -51,14 +54,21 @@ export function Insights() {
             }
             {filtered.map((item, i) =>
             <Reveal key={item.slug} delay={Math.min(i * 0.04, 0.2)}>
-                <article className="group grid gap-5 border-b border-line py-9 lg:grid-cols-[170px_1fr_120px] lg:items-start lg:gap-12">
+                <article className="border-b border-line">
+                <Link href={`/insights/${item.slug}`} className="group grid gap-5 py-9 lg:grid-cols-[170px_1fr_120px] lg:items-start lg:gap-12">
+                  <div>
                   <div className="flex items-center gap-2 font-mono text-[10px] tracking-label text-cyan/80">
-                    {item.kind === 'Video' ?
-                  <PlayIcon className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" /> :
-
-                  <FileTextIcon className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
-                  }
-                    {item.kind.toUpperCase()}
+                      {item.kind === 'Video' ?
+                    <PlayIcon className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" /> :
+  
+                    <FileTextIcon className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+                    }
+                      {item.kind.toUpperCase()}
+                    </div>
+                    {item.cover &&
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.cover} alt="" loading="lazy" className="mt-4 aspect-[16/10] w-full rounded border border-line object-cover" />
+                    }
                   </div>
                   <div>
                     <h2 className="max-w-3xl font-display text-xl font-semibold leading-snug tracking-tight text-ink transition-colors duration-200 ease-sim group-hover:text-cyan-soft lg:text-[24px]">
@@ -72,6 +82,7 @@ export function Insights() {
                     </div>
                   </div>
                   <div className="font-mono text-[11px] text-ink-faint lg:text-right">{item.date}</div>
+                </Link>
                 </article>
               </Reveal>
             )}

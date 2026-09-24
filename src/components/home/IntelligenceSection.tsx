@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
-import { intelligenceChain, REF_IMAGE_NEURAL } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
+import { REF_IMAGE_NEURAL } from '../../data/site';
 
 export function IntelligenceSection() {
+  const { intelligenceChain } = useContent();
   const [active, setActive] = useState(1);
 
   return (

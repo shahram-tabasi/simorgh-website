@@ -6,11 +6,12 @@ import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
 import { Button } from '../ui/Button';
 import { Starfield } from '../ui/Starfield';
-import { getProduct } from '../../data/products';
 import { REF_IMAGE_PLANET } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 
 export function DigitalTwinSection() {
-  const twin = getProduct('simorgh-digital-twin');
+  const { products } = useContent();
+  const twin = products.find((p) => p.slug === 'simorgh-digital-twin');
   const layers = twin?.pipeline ?? [];
   const [active, setActive] = useState(layers.length - 1);
 

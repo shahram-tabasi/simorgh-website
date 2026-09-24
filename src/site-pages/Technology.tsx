@@ -6,7 +6,7 @@ import { SectionHeader } from '../components/ui/SectionHeader';
 import { Reveal } from '../components/ui/Reveal';
 import { Button } from '../components/ui/Button';
 import { Pipeline } from '../components/product/Pipeline';
-import { aiLayers, intelligenceChain, REF_IMAGE_HERO } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 const architecture = [
 { tier: 'Experience', body: 'Product interfaces, dashboards and the future SIMORGH AI assistant, all speaking to the same APIs.' },
@@ -18,6 +18,7 @@ const architecture = [
 
 
 export function Technology() {
+  const { pages, aiLayers, intelligenceChain } = useContent();
   return (
     <>
       <PageHero
@@ -25,7 +26,8 @@ export function Technology() {
         title="The intelligence layer beneath every product"
         lead="Six tiers, one governance model. Engineering context is not bolted onto a general model — it is the substrate everything else is built from."
         crumbs={[{ label: 'Technology' }]}
-        image={REF_IMAGE_HERO} />
+        image={pages.technology.heroImage}
+        flip={pages.technology.heroFlip} />
       
 
       <section className="border-b border-line bg-space-0">

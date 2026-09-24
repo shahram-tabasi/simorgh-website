@@ -3,8 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SearchIcon, XIcon } from 'lucide-react';
-import { products } from '../../data/products';
-import { industries, insights } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 
 interface Result {
   label: string;
@@ -13,18 +12,19 @@ interface Result {
 }
 
 export function SearchOverlay({ open, onClose }: {open: boolean;onClose: () => void;}) {
+  const { products, industries, articles: insights } = useContent();
   const [query, setQuery] = useState('');
 
   const index = useMemo<Result[]>(
     () => [
     ...products.map((p) => ({ label: p.name, kind: 'Product', to: `/products/${p.slug}` })),
     ...industries.map((i) => ({ label: i.name, kind: 'Industry', to: `/industries/${i.slug}` })),
-    ...insights.map((i) => ({ label: i.title, kind: i.kind, to: '/insights' })),
+    ...insights.map((i) => ({ label: i.title, kind: i.kind, to: `/insights/${i.slug}` })),
     { label: 'SIMORGH AI', kind: 'Technology', to: '/technology' },
     { label: 'Request a Demo', kind: 'Page', to: '/request-demo' },
     { label: 'Contact', kind: 'Page', to: '/contact' }],
 
-    []
+    [products, industries, insights]
   );
 
   const results = query.trim() ?

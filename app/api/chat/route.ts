@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
-import { ecosystem, industries, intelligenceChain, aiLayers, insights } from '@/src/data/site';
-import { products } from '@/src/data/products';
+import { getContent, toPublic } from '@/src/content/store';
 
-const siteContext = JSON.stringify({ products, industries, ecosystem, intelligenceChain, aiLayers, insights }).slice(0, 50000);
+async function siteContext() {
+  const c = toPublic(await getContent());
+  const { products, industries, ecosystem, intelligenceChain, aiLayers, articles, settings } = c;
+  return JSON.stringify({ products, industries, ecosystem, intelligenceChain, aiLayers, articles, contact: { email: settings.email, phone: settings.phone, address: settings.address } }).slice(0, 50000);
+}
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +15,7 @@ export async function POST(req: Request) {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
       body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-4.1-mini', temperature: 0.2, messages: [
-        { role: 'system', content: `You are Simorgh Site Intelligence, the official AI guide for the SIMORGH website. Answer from the supplied site knowledge first. Never invent product capabilities, prices, clients, metrics or policies. If information is not present, say so and suggest the relevant page. Answer in the user's current site language (${locale}), while preserving technical terms, product names, software names and acronyms exactly. Be concise and professional. Site knowledge: ${siteContext}` },
+        { role: 'system', content: `You are Simorgh Site Intelligence, the official AI guide for the SIMORGH website. Answer from the supplied site knowledge first. Never invent product capabilities, prices, clients, metrics or policies. If information is not present, say so and suggest the relevant page. Answer in the user's current site language (${locale}), while preserving technical terms, product names, software names and acronyms exactly. Be concise and professional. Site knowledge: ${await siteContext()}` },
         ...messages.slice(-12)
       ] })
     });

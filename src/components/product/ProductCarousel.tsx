@@ -4,27 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import type { Product } from '../../types/content';
-import { products } from '../../data/products';
-
-type ProductSlide = Product & { image: string; accent: string };
-
-const slideMeta: Record<string, { image: string; accent: string }> = {
-  'simorgh-design-suite': { image: '/product-design-suite.png', accent: 'ELECTRICAL ENGINEERING & AUTOMATION' },
-  'simorgh-grid': { image: '/product-grid.jpg', accent: 'SMART GRID & ENERGY INTELLIGENCE' },
-  'simorgh-digital-twin': { image: '/product-twin.png', accent: 'SMART MONITORING & DIGITAL TWIN' },
-  'simorgh-kara': { image: '/4.png', accent: 'WORKFORCE & INDUSTRIAL SAFETY' },
-  'simorgh-shop': { image: '/33.jpg', accent: 'PROJECT & BUSINESS MANAGEMENT' },
-  'simorgh-draw': { image: '/3.jpg', accent: 'INTELLIGENT ENGINEERING DRAWING' },
-  'simorgh-cloud': { image: '/2.jpg', accent: 'AI & INFRASTRUCTURE' },
-};
-
-const slides: ProductSlide[] = ['simorgh-design-suite', 'simorgh-grid', 'simorgh-digital-twin', 'simorgh-kara', 'simorgh-shop', 'simorgh-draw', 'simorgh-cloud']
-  .map((slug) => {
-    const product = products.find((item) => item.slug === slug);
-    if (!product) throw new Error(`Missing product: ${slug}`);
-    return { ...product, ...slideMeta[slug] };
-  });
+import { useContent } from '../../content/ContentProvider';
 
 const AUTOPLAY_MS = 3000;
 const SWIPE_PX = 50;
@@ -39,11 +19,11 @@ const EASE = 'cubic-bezier(.22,.61,.36,1)';
 // black and no wait for the next image: it is already loaded, it just moves.
 
 /** Where a card sits relative to the active one: 0 centre, ±1 shoulders, else off-stage. */
-function offsetOf(index: number, active: number) {
-  const half = Math.floor(slides.length / 2);
+function offsetOf(index: number, active: number, count: number) {
+  const half = Math.floor(count / 2);
   let offset = index - active;
-  if (offset > half) offset -= slides.length;
-  if (offset < -half) offset += slides.length;
+  if (offset > half) offset -= count;
+  if (offset < -half) offset += count;
   return offset;
 }
 
@@ -66,14 +46,15 @@ function cardStyle(offset: number): React.CSSProperties {
 }
 
 export function ProductCarousel() {
+  const { products: slides, pages } = useContent();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const dragStart = useRef<number | null>(null);
   const swiped = useRef(false);
 
-  const show = useCallback((n: number) => setActive((n + slides.length) % slides.length), []);
-  const next = useCallback(() => setActive((value) => (value + 1) % slides.length), []);
-  const previous = useCallback(() => setActive((value) => (value - 1 + slides.length) % slides.length), []);
+  const show = useCallback((n: number) => setActive((n + slides.length) % slides.length), [slides.length]);
+  const next = useCallback(() => setActive((value) => (value + 1) % slides.length), [slides.length]);
+  const previous = useCallback(() => setActive((value) => (value - 1 + slides.length) % slides.length), [slides.length]);
 
   // Restarts on every change, so a manual step gets a full interval before the next one.
   useEffect(() => {
@@ -81,6 +62,8 @@ export function ProductCarousel() {
     const timer = window.setTimeout(next, AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
   }, [active, paused, next]);
+
+  if (slides.length === 0) return null;
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowLeft') previous();
@@ -106,6 +89,10 @@ export function ProductCarousel() {
       className="relative overflow-hidden border-y border-cyan/10 bg-[#020916]/55 py-14 lg:py-20"
       aria-label="Product showcase"
     >
+      {pages.products.heroImage &&
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={pages.products.heroImage} alt="" aria-hidden="true" className={`pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 ${pages.products.heroFlip ? '-scale-y-100' : ''}`} />
+      }
       <div className="pointer-events-none absolute inset-0 opacity-40">
         <div className="absolute left-1/2 top-1/2 h-[700px] w-[1100px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan/10 blur-[120px]" />
         <div className="sim-grid-lines absolute inset-0 opacity-25" />
@@ -147,7 +134,7 @@ export function ProductCarousel() {
             style={{ transformStyle: 'preserve-3d' }}
           >
             {slides.map((slide, index) => {
-              const offset = offsetOf(index, active);
+              const offset = offsetOf(index, active, slides.length);
               const current = offset === 0;
               return (
                 <div
@@ -169,6 +156,7 @@ export function ProductCarousel() {
                     }}
                     className="block h-full"
                   >
+                    {slide.image &&
                     <Image
                       src={slide.image}
                       alt={slide.name}
@@ -179,6 +167,7 @@ export function ProductCarousel() {
                       sizes="(max-width: 1024px) 88vw, 860px"
                       className="object-cover"
                     />
+                    }
                     <div className="absolute inset-0 bg-gradient-to-r from-[#020713]/95 via-[#020713]/65 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#020713]/75 via-transparent to-transparent" />
 

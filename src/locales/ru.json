@@ -773,5 +773,11 @@
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "Ваш запрос {0} передан ответственной команде. Ответ придёт на {1} в течение одного рабочего дня.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "Архитектор решений из команды {0} свяжется с вами по адресу {1} в течение одного рабочего дня, чтобы согласовать демонстрационные данные и объём сессии.",
  "enterprise": "корпоративного характера",
- "SIMORGH company logo": "Логотип компании SIMORGH"
+ "SIMORGH company logo": "Логотип компании SIMORGH",
+ "GALLERY": "ГАЛЕРЕЯ",
+ "Product gallery": "Галерея продукта",
+ "SCHEMATICS": "СХЕМЫ",
+ "Diagrams and schematics": "Диаграммы и схемы",
+ "The message could not be sent. Please try again, or email us directly.": "Не удалось отправить сообщение. Попробуйте ещё раз или напишите нам напрямую по электронной почте.",
+ "Talk to the engineers behind the platform about your network, your plant or your city.": "Обсудите вашу сеть, предприятие или город с инженерами, создавшими платформу."
 }

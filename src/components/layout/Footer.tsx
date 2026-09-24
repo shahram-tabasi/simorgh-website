@@ -3,11 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { Logo } from './Logo';
-import { products } from '../../data/products';
-import { industries, languages } from '../../data/site';
+import { languages } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 import { useI18n } from '../../i18n';
 
-const columns = [
+const columns = (products: { short: string; slug: string }[], industries: { name: string; slug: string }[]) => [
 {
   title: 'Products',
   links: products.map((p) => ({ label: p.short, to: `/products/${p.slug}` }))
@@ -24,13 +24,13 @@ const columns = [
   { label: 'Insights', to: '/insights' },
   { label: 'Careers', to: '/company' },
   { label: 'Contact', to: '/contact' },
-  { label: 'Request a Demo', to: '/request-demo' },
-  { label: 'Admin Console', to: '/admin' }]
+  { label: 'Request a Demo', to: '/request-demo' }]
 
 }];
 
 
 export function Footer() {
+  const { products, industries } = useContent();
   const { t, locale } = useI18n();
   return (
     <footer className="relative border-t border-line bg-space-1">
@@ -50,7 +50,7 @@ export function Footer() {
             </div>
           </div>
 
-          {columns.map((col) =>
+          {columns(products, industries).map((col) =>
           <div key={col.title}>
               <h3 className="font-mono text-[10px] tracking-label text-cyan/80">{(t.nav[col.title] ?? col.title).toUpperCase()}</h3>
               <ul className="mt-5 flex flex-col gap-3">

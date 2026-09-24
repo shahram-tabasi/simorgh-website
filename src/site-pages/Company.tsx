@@ -6,7 +6,7 @@ import { PageHero } from '../components/ui/PageHero';
 import { SectionHeader } from '../components/ui/SectionHeader';
 import { Reveal } from '../components/ui/Reveal';
 import { Button } from '../components/ui/Button';
-import { REF_IMAGE_HERO } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 const pillars = [
 { title: 'Vision', body: 'Engineering knowledge should be executable. The systems that run a city or a plant deserve software that understands them, not software they are forced to accommodate.' },
@@ -23,6 +23,7 @@ const positions = [
 
 
 export function Company() {
+  const { pages } = useContent();
   return (
     <>
       <PageHero
@@ -30,7 +31,8 @@ export function Company() {
         title="SIMORGH Intelligent Iranian Technology"
         lead="An engineering and artificial intelligence company building software for the systems that physically run industry, energy and cities."
         crumbs={[{ label: 'Company' }]}
-        image={REF_IMAGE_HERO} />
+        image={pages.company.heroImage}
+        flip={pages.company.heroFlip} />
       
 
       <section className="border-b border-line bg-space-0">

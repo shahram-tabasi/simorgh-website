@@ -29,6 +29,7 @@ interface Props {
   className?: string;
   type?: 'button' | 'submit';
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export function Button({
@@ -39,7 +40,8 @@ export function Button({
   size = 'md',
   className = '',
   type = 'button',
-  onClick
+  onClick,
+  disabled
 }: Props) {
   const cls = `${base} ${sizes[size]} ${variants[variant]} ${className}`;
   if (to) {
@@ -57,7 +59,7 @@ export function Button({
 
   }
   return (
-    <button type={type} className={cls} onClick={onClick}>
+    <button type={type} className={`${cls} disabled:cursor-wait disabled:opacity-60`} onClick={onClick} disabled={disabled}>
       {children}
     </button>);
 

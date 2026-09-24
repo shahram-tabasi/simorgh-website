@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { ArrowRightIcon } from 'lucide-react';
 import { Icon } from '../components/ui/Icon';
 import { Reveal } from '../components/ui/Reveal';
-import { products } from '../data/products';
+import { useContent } from '../content/ContentProvider';
 import { ProductCarousel } from '../components/product/ProductCarousel';
 
 export function Products() {
+  const { products } = useContent();
   return (
     <>
       <ProductCarousel />

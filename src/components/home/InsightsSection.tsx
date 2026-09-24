@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { ArrowRightIcon, PlayIcon, FileTextIcon } from 'lucide-react';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
-import { insights } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 
 export function InsightsSection() {
+  const { articles: insights } = useContent();
   const [lead, ...others] = insights.slice(0, 4);
+  if (!lead) return null;
 
   return (
     <section className="relative w-full border-t border-line bg-space-1" aria-label="Insights">
@@ -30,7 +32,7 @@ export function InsightsSection() {
         </div>
 
         <div className="mt-16 grid gap-px border border-line bg-line lg:grid-cols-[1.3fr_1fr]">
-          <Link href="/insights" className="group flex flex-col justify-between bg-space-0 p-8 lg:p-12">
+          <Link href={`/insights/${lead.slug}`} className="group flex flex-col justify-between bg-space-0 p-8 lg:p-12">
             <div>
               <span className="font-mono text-[10px] tracking-label text-cyan/80">
                 {lead.kind.toUpperCase()} · {lead.category.toUpperCase()}
@@ -50,7 +52,7 @@ export function InsightsSection() {
           <ul className="flex flex-col bg-space-1">
             {others.map((item) =>
             <li key={item.slug} className="border-b border-line last:border-b-0">
-                <Link href="/insights" className="group flex gap-4 p-6 transition-colors duration-200 ease-sim hover:bg-space-2">
+                <Link href={`/insights/${item.slug}`} className="group flex gap-4 p-6 transition-colors duration-200 ease-sim hover:bg-space-2">
                   <span className="mt-0.5 text-ink-faint">
                     {item.kind === 'Video' ?
                   <PlayIcon className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" /> :

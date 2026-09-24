@@ -3,9 +3,11 @@
 import React from 'react';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
-import { aiLayers, REF_IMAGE_BIRD } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
+import { REF_IMAGE_BIRD } from '../../data/site';
 
 export function AISection() {
+  const { aiLayers } = useContent();
   return (
     <section className="relative w-full overflow-hidden border-t border-line bg-space-1" aria-label="SIMORGH AI">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-72 overflow-hidden">

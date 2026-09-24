@@ -17,15 +17,17 @@ interface Props {
   lead?: string;
   crumbs?: Crumb[];
   image?: string;
+  /** Mirror the background vertically. */
+  flip?: boolean;
   children?: React.ReactNode;
 }
 
-export function PageHero({ eyebrow, title, lead, crumbs = [], image, children }: Props) {
+export function PageHero({ eyebrow, title, lead, crumbs = [], image, flip = false, children }: Props) {
   return (
     <section className="relative w-full overflow-hidden border-b border-line bg-space-0 pt-[72px]">
       {image &&
       <div className="absolute inset-0">
-          <img src={image} alt="" aria-hidden="true" className="h-full w-full object-cover opacity-40" />
+          <img src={image} alt="" aria-hidden="true" className={`h-full w-full object-cover opacity-40 ${flip ? '-scale-y-100' : ''}`} />
           <div className="absolute inset-0 bg-gradient-to-t from-space-0 via-space-0/80 to-space-0/60" />
         </div>
       }

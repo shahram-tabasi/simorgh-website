@@ -773,5 +773,11 @@
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "{0} talebiniz sorumlu ekibe yönlendirildi. Bir iş günü içinde {1} adresine yanıt bekleyebilirsiniz.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "{0} ekibinden bir çözüm mimarı, örnek veriyi ve oturumun kapsamını belirlemek için bir iş günü içinde {1} adresinden sizinle iletişime geçecek.",
  "enterprise": "kurumsal",
- "SIMORGH company logo": "SIMORGH şirket logosu"
+ "SIMORGH company logo": "SIMORGH şirket logosu",
+ "GALLERY": "GALERİ",
+ "Product gallery": "Ürün galerisi",
+ "SCHEMATICS": "ŞEMALAR",
+ "Diagrams and schematics": "Diyagramlar ve şemalar",
+ "The message could not be sent. Please try again, or email us directly.": "Mesaj gönderilemedi. Lütfen tekrar deneyin veya bize doğrudan e-posta gönderin.",
+ "Talk to the engineers behind the platform about your network, your plant or your city.": "Ağınız, tesisiniz veya şehriniz hakkında platformu geliştiren mühendislerle konuşun."
 }

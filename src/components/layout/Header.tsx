@@ -8,10 +8,12 @@ import { SearchIcon, GlobeIcon, MenuIcon, XIcon, ChevronDownIcon } from 'lucide-
 import { Logo } from './Logo';
 import { SearchOverlay } from './SearchOverlay';
 import { Button } from '../ui/Button';
-import { languages, navigation } from '../../data/site';
 import { useI18n, type Locale } from '../../i18n';
+import { useContent } from '../../content/ContentProvider';
+import { languages } from '../../data/site';
 
 export function Header() {
+  const { navigation } = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);

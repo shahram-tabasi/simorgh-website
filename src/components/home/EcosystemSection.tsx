@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Reveal } from '../ui/Reveal';
 import { Icon } from '../ui/Icon';
-import { ecosystem } from '../../data/site';
+import { useContent } from '../../content/ContentProvider';
 
 const radius = 38;
 
@@ -14,6 +14,7 @@ function polar(i: number, total: number) {
 }
 
 export function EcosystemSection() {
+  const { ecosystem } = useContent();
   const [active, setActive] = useState<number | null>(null);
 
   return (
@@ -45,7 +46,6 @@ export function EcosystemSection() {
                   strokeWidth={isOn ? 0.35 : 0.2}
                   className={isOn ? '' : 'sim-dash'}
                   vectorEffect="non-scaling-stroke" />);
-
 
             })}
           </svg>

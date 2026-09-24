@@ -5,8 +5,7 @@ import { CheckIcon, Loader2Icon } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { Button } from '../components/ui/Button';
 import { TextField, SelectField, TextArea } from '../components/forms/Field';
-import { products } from '../data/products';
-import { industries, REF_IMAGE_PLANET } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 type Status = 'idle' | 'submitting' | 'done' | 'error';
 
@@ -25,6 +24,7 @@ const initial = {
 const workflow = ['New', 'Contacted', 'Qualified', 'Demo Scheduled', 'Completed', 'Closed'];
 
 export function RequestDemo() {
+  const { pages, products, industries } = useContent();
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>('idle');
@@ -41,11 +41,26 @@ export function RequestDemo() {
     return Object.keys(next).length === 0;
   };
 
-  const submit = (e: React.FormEvent) => {
+  const [failed, setFailed] = useState(false);
+  const [trap, setTrap] = useState('');
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setStatus('submitting');
-    window.setTimeout(() => setStatus('done'), 900);
+    setFailed(false);
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'demo', website: trap, fields: form }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setStatus('done');
+    } catch {
+      setFailed(true);
+      setStatus('idle');
+    }
   };
 
   return (
@@ -55,7 +70,8 @@ export function RequestDemo() {
         title="See the platform against your own data"
         lead="Demonstrations are run on a representative sample of your documentation, telemetry or spatial data — never on a canned dataset."
         crumbs={[{ label: 'Request Demo' }]}
-        image={REF_IMAGE_PLANET} />
+        image={pages.requestDemo.heroImage}
+        flip={pages.requestDemo.heroFlip} />
       
 
       <section className="bg-space-0">
@@ -74,6 +90,7 @@ export function RequestDemo() {
               </div> :
 
             <form onSubmit={submit} noValidate>
+                <input type="text" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
                 <div className="grid gap-6 sm:grid-cols-2">
                   <TextField label="Name" name="name" required value={form.name} onChange={set('name')} error={errors.name} />
                   <TextField label="Company" name="company" required value={form.company} onChange={set('company')} error={errors.company} />
@@ -107,7 +124,7 @@ export function RequestDemo() {
                 </div>
 
                 <div className="mt-10 flex flex-wrap items-center gap-5">
-                  <Button type="submit" size="lg">
+                  <Button type="submit" size="lg" disabled={status === 'submitting'}>
                     {status === 'submitting' ?
                   <>
                         <Loader2Icon className="h-4 w-4 animate-spin" strokeWidth={1.8} aria-hidden="true" />
@@ -121,6 +138,7 @@ export function RequestDemo() {
                     Submitted requests enter the sales workflow and are answered by an engineer, not a queue.
                   </p>
                 </div>
+                {failed && <p className="mt-5 text-[13.5px] text-red-300" role="alert">The message could not be sent. Please try again, or email us directly.</p>}
               </form>
             }
           </div>

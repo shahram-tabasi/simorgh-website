@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowRightIcon } from 'lucide-react';
 import { PageHero } from '../components/ui/PageHero';
 import { Reveal } from '../components/ui/Reveal';
-import { REF_IMAGE_NEURAL } from '../data/site';
+import { useContent } from '../content/ContentProvider';
 
 const solutions = [
 {
@@ -39,6 +39,7 @@ const solutions = [
 
 
 export function Solutions() {
+  const { pages } = useContent();
   return (
     <>
       <PageHero
@@ -46,7 +47,8 @@ export function Solutions() {
         title="Problems first, products second"
         lead="Four recurring problems across the sectors SIMORGH works in, and the combination of products that addresses each."
         crumbs={[{ label: 'Solutions' }]}
-        image={REF_IMAGE_NEURAL} />
+        image={pages.solutions.heroImage}
+        flip={pages.solutions.heroFlip} />
       
 
       <section className="bg-space-0">

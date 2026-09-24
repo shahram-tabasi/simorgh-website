@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { dictionaryValues, useI18n, type Locale } from '../../i18n';
 import { isProtectedOnly } from '../../data/glossary';
+import { useContent } from '../../content/ContentProvider';
 
 // Translates the rendered page in place.
 //
@@ -106,6 +107,8 @@ function sourceOf(slot: Slot | undefined, current: string) {
 
 export function AutoTranslate() {
   const { locale } = useI18n();
+  // Translations the admin added or corrected win over the bundled catalog.
+  const overrides = useContent().translations?.[locale];
 
   useEffect(() => {
     let cancelled = false;
@@ -264,6 +267,10 @@ export function AutoTranslate() {
       }
       if (cancelled) return;
       catalog = catalogs.get(locale) ?? { entries: {}, patterns: [] };
+      if (overrides && Object.keys(overrides).length) {
+        const entries = { ...catalog.entries, ...overrides };
+        catalog = { entries, patterns: compilePatterns(entries) };
+      }
       run(document.body);
     };
 
@@ -273,7 +280,7 @@ export function AutoTranslate() {
       window.clearTimeout(flushTimer);
       observer?.disconnect();
     };
-  }, [locale]);
+  }, [locale, overrides]);
 
   return null;
 }

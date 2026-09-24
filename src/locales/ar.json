@@ -773,5 +773,11 @@
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "تمت إحالة استفسارك بشأن {0} إلى الفريق المسؤول. سيصلك الرد على {1} خلال يوم عمل واحد.",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "سيتواصل معك مهندس حلول من فريق {0} على {1} خلال يوم عمل واحد للاتفاق على بيانات العينة ونطاق الجلسة.",
  "enterprise": "المؤسسات",
- "SIMORGH company logo": "شعار شركة SIMORGH"
+ "SIMORGH company logo": "شعار شركة SIMORGH",
+ "GALLERY": "المعرض",
+ "Product gallery": "معرض المنتج",
+ "SCHEMATICS": "المخططات",
+ "Diagrams and schematics": "المخططات والرسوم التخطيطية",
+ "The message could not be sent. Please try again, or email us directly.": "تعذّر إرسال الرسالة. يرجى المحاولة مرة أخرى أو مراسلتنا مباشرة عبر البريد الإلكتروني.",
+ "Talk to the engineers behind the platform about your network, your plant or your city.": "تحدّث مع المهندسين الذين بنوا المنصة عن شبكتك أو مصنعك أو مدينتك."
 }

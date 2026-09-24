@@ -773,5 +773,11 @@
  "Your {0} enquiry has been routed to the responsible team. Expect a reply at {1} within one working day.": "您的{0}咨询已转交负责团队。我们将在一个工作日内回复至 {1}。",
  "A solution architect from the {0} team will contact {1} within one working day to agree the sample data and scope of the session.": "{0} 团队的解决方案架构师将在一个工作日内通过 {1} 与您联系，商定样本数据和演示范围。",
  "enterprise": "企业",
- "SIMORGH company logo": "SIMORGH 公司标志"
+ "SIMORGH company logo": "SIMORGH 公司标志",
+ "GALLERY": "图库",
+ "Product gallery": "产品图库",
+ "SCHEMATICS": "原理图",
+ "Diagrams and schematics": "图表与原理图",
+ "The message could not be sent. Please try again, or email us directly.": "消息未能发送。请重试，或直接给我们发送电子邮件。",
+ "Talk to the engineers behind the platform about your network, your plant or your city.": "与打造该平台的工程师聊聊您的电网、工厂或城市。"
 }
