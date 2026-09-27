@@ -1,0 +1,175 @@
+# The way in: 192.168.1.220, announced on the LAN by worker3.
+#
+#   Internet -> ArvanCloud -> nginx on 192.168.1.68 --https--> 192.168.1.220
+#   LAN PCs  -> (PowerDNS: simorghai.com = 192.168.1.220) ----> 192.168.1.220
+#
+# 192.168.1.220 is a Cilium LB-IPAM address answered by ARP from worker3's
+# ens34, in front of an Istio Gateway (an Envoy Deployment istiod creates in
+# this namespace, pinned to worker3 as well). TLS ends there with the same
+# Let's Encrypt wildcard (*.simorghai.com + simorghai.com) nginx on .68 uses.
+
+# ── The address ──────────────────────────────────────────────────────────────
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: simorgh-lb-pool-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+spec:
+  blocks:
+    - start: 192.168.1.220
+      stop: 192.168.1.220
+  # Only Services carrying this label draw from this pool, and the Gateway
+  # puts it on the Service istiod generates (spec.infrastructure below).
+  serviceSelector:
+    matchLabels:
+      simorgh.io/lb-pool: website
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: simorgh-website-l2
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+spec:
+  serviceSelector:
+    matchLabels:
+      simorgh.io/lb-pool: website
+  # The LAN interface, anchored: `ens[0-9]+` would also match the GPU nodes'
+  # ens33, which has no LAN address, and a lease landing there answers nobody.
+  interfaces: ["^ens34$"]
+  nodeSelector:
+    matchExpressions:
+      - key: kubernetes.io/hostname
+        operator: In
+        values: [worker3]
+  externalIPs: true
+  loadBalancerIPs: true
+---
+# ── Where istiod puts the gateway's pod ─────────────────────────────────────
+# Merged into the Deployment istiod generates for the Gateway below
+# (spec.infrastructure.parametersRef).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: website-gateway-options
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+data:
+  deployment: |
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            kubernetes.io/hostname: worker3
+          tolerations:
+            - key: simorgh.io/pool
+              operator: Exists
+              effect: NoSchedule
+---
+# ── The gateway ─────────────────────────────────────────────────────────────
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: website
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+  annotations:
+    # Two proxies sit in front from the internet: ArvanCloud and nginx on .68.
+    # Envoy then takes the client's own address from X-Forwarded-For rather
+    # than nginx's, which is what the contact form records.
+    proxy.istio.io/config: '{"gatewayTopology":{"numTrustedProxies":2}}'
+spec:
+  gatewayClassName: istio
+  infrastructure:
+    labels:
+      simorgh.io/lb-pool: website
+    annotations:
+      lbipam.cilium.io/ips: "192.168.1.220"
+    parametersRef:
+      group: ""
+      kind: ConfigMap
+      name: website-gateway-options
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces: { from: Same }
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          # The Let's Encrypt wildcard, copied in from another namespace
+          # (README.md, step 2). It covers both simorghai.com and www.
+          - kind: Secret
+            name: wildcard-simorghai-tls
+      allowedRoutes:
+        namespaces: { from: Same }
+---
+# http://anything -> https://simorghai.com, path kept.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: website-https-redirect
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+spec:
+  parentRefs:
+    - name: website
+      sectionName: http
+  hostnames: [simorghai.com, www.simorghai.com]
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            hostname: simorghai.com
+            statusCode: 301
+---
+# https://www.simorghai.com -> https://simorghai.com: one canonical address.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: website-www-redirect
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+spec:
+  parentRefs:
+    - name: website
+      sectionName: https
+  hostnames: [www.simorghai.com]
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            hostname: simorghai.com
+            statusCode: 301
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: website
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+spec:
+  parentRefs:
+    - name: website
+      sectionName: https
+  hostnames: [simorghai.com]
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: / }
+      backendRefs:
+        - name: simorgh-website
+          port: 3000
+      timeouts:
+        # Media uploads in the admin panel and the AI chat both take a while.
+        request: 120s

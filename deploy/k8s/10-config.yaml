@@ -1,0 +1,27 @@
+# Non-secret settings, read as environment variables. The secret ones
+# (ADMIN_PASSWORD, SMTP_PASS, ...) live in the `simorgh-website-secrets`
+# Secret, created by hand - see README.md. Changing either needs
+#   kubectl -n simorgh-website rollout restart deploy/simorgh-website
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: simorgh-website-config
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+data:
+  # Also baked into the image at build time (Dockerfile ARG); keep them equal.
+  NEXT_PUBLIC_SITE_URL: https://simorghai.com
+  # content.json, uploads, backups and form submissions: the PVC in 20-storage.yaml.
+  SIMORGH_STORAGE_DIR: /data
+  ADMIN_USERNAME: admin
+  OPENAI_MODEL: gpt-4.1-mini
+  # Company email (docs/EMAIL-SETUP.fa.md). Leave as they are until mailcow runs.
+  MAIL_DOMAIN: simorghai.com
+  MAIL_HOST: mail.simorghai.com
+  MAIL_SERVER_IP: ""
+  MAILCOW_URL: ""
+  WEBMAIL_URL: https://mail.simorghai.com/SOGo/
+  SMTP_HOST: mail.simorghai.com
+  SMTP_PORT: "587"
+  SMTP_USER: noreply@simorghai.com

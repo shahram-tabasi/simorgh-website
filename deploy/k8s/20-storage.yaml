@@ -1,0 +1,22 @@
+# Everything the admin panel changes: content.json, uploaded media, the last 30
+# content backups, and contact/demo-request submissions. Without this volume
+# every edit would vanish on the next restart. It is not in kustomization.yaml's
+# resources on purpose: `kubectl delete -k .` must not take the data with it.
+# Apply it once with `kubectl apply -f 20-storage.yaml`.
+#
+# ReadWriteOnce on Ceph RBD, which is why the Deployment runs one replica with
+# the Recreate strategy: two pods cannot mount the same RBD image, and the app
+# keeps its state in files, not a database, so two copies would disagree anyway.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: simorgh-website-data
+  namespace: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: ceph-rbd-simorgh
+  resources:
+    requests:
+      storage: 10Gi

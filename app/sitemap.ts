@@ -2,6 +2,9 @@ import type { MetadataRoute } from 'next';
 import { getContent, toPublic } from '@/src/content/store';
 import { absoluteUrl } from '@/src/seo/metadata';
 
+// From content.json at request time, not the build's defaults.
+export const dynamic = 'force-dynamic';
+
 // Every public page, product, industry and article, so search engines find
 // new content as soon as the admin publishes it.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

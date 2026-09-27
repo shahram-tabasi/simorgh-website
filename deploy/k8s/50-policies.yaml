@@ -1,0 +1,182 @@
+# Who may talk to whom, in two layers.
+#
+#   NetworkPolicy        (Cilium, L3/L4) - may this packet exist at all?
+#   AuthorizationPolicy  (ztunnel, mTLS identity) - is the caller who it says?
+#
+# The result: the website pod accepts traffic only from this namespace's
+# gateway, and reaches out only to DNS, istiod, and HTTPS/SMTP on the internet.
+
+# ── NetworkPolicy ───────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: simorgh-website
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: simorgh-website
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+---
+# istiod: the gateway's configuration (xDS) and the workload certificates.
+# Without it the gateway never programmes and ambient refuses the traffic.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-istio-control-plane
+  namespace: simorgh-website
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+      ports:
+        - { protocol: TCP, port: 15012 }
+        - { protocol: TCP, port: 15010 }
+        - { protocol: TCP, port: 15014 }
+        - { protocol: TCP, port: 443 }
+---
+# Browsers (via nginx on .68, or directly on the LAN) reaching the gateway.
+# No `from`: the clients are the world. 15021 is the gateway's own readiness
+# port; without it the pod never goes Ready and the Gateway never programmes.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-gateway
+  namespace: simorgh-website
+spec:
+  podSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: website
+  policyTypes: [Ingress]
+  ingress:
+    - ports:
+        - { protocol: TCP, port: 80 }
+        - { protocol: TCP, port: 443 }
+        - { protocol: TCP, port: 15021 }
+---
+# Gateway -> website. The website is in the ambient mesh, so the gateway
+# connects over HBONE (15008) as well as to the app port itself.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gateway-to-website
+  namespace: simorgh-website
+spec:
+  podSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: website
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: simorgh-website
+      ports:
+        - { protocol: TCP, port: 3000 }
+        - { protocol: TCP, port: 15008 }
+---
+# The website's inbound: the gateway, and kubelet's probes. The probes come
+# from the node (SNAT'd by istio-cni to 169.254.7.127), which no selector can
+# name, so the ports are open to any source at L3/L4 - the AuthorizationPolicy
+# below is what then refuses anything that is not the gateway.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-website
+  namespace: simorgh-website
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: simorgh-website
+  policyTypes: [Ingress]
+  ingress:
+    - ports:
+        - { protocol: TCP, port: 3000 }
+        - { protocol: TCP, port: 15008 }
+---
+# The website's outbound, beyond DNS:
+#   443      - api.openai.com (AI chat and on-the-fly translation)
+#   587, 465 - SMTP for contact / demo-request notifications
+# Internet only: the LAN and the cluster's own ranges are excluded, so a
+# compromised website cannot reach the databases or anything on 192.168.1.x.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-website-egress
+  namespace: simorgh-website
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: simorgh-website
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]
+      ports:
+        - { protocol: TCP, port: 443 }
+        - { protocol: TCP, port: 587 }
+        - { protocol: TCP, port: 465 }
+    # If mailcow ends up on the LAN (MAILCOW_URL / SMTP_HOST pointing at a
+    # 192.168.1.x address), open exactly that host here, for example:
+    # - to:
+    #     - ipBlock: { cidr: 192.168.1.70/32 }
+    #   ports:
+    #     - { protocol: TCP, port: 587 }
+    #     - { protocol: TCP, port: 8080 }
+---
+# ── Istio (ambient) ─────────────────────────────────────────────────────────
+# Every meshed pod in this namespace accepts mTLS only.
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: simorgh-website
+spec:
+  mtls:
+    mode: STRICT
+---
+# Only the gateway may call the website: istiod names the gateway's service
+# account <gateway-name>-istio. ztunnel enforces this on the website's node.
+# kubelet's probes are exempt from AuthorizationPolicy in ambient.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: website-from-gateway-only
+  namespace: simorgh-website
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: simorgh-website
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/simorgh-website/sa/website-istio
+      to:
+        - operation:
+            ports: ["3000"]

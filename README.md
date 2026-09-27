@@ -66,3 +66,12 @@ npm start
 The source was statically checked for remaining `react-router-dom`, `NavLink`, `Outlet`, and `<Link to=...>` usage.
 
 A full `next build` was not completed in the conversion environment because installing npm dependencies exceeded the available execution window. Run `npm install` followed by `npm run build` locally/server-side to perform the final Next.js compiler check.
+
+## Deployment
+
+- **Kubernetes (production, simorghai.com):** `deploy/k8s/README.md` — image build,
+  manifests, IP 192.168.1.220, PowerDNS, nginx on .68 and ArvanCloud settings.
+- Single server with systemd + nginx: `deploy/systemd/`, `deploy/nginx/simorghai.conf`.
+
+Health endpoint for probes and monitors: `GET /api/health` (liveness) and
+`GET /api/health?ready` (also checks that the storage folder is writable).

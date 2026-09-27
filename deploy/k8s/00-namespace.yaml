@@ -1,0 +1,18 @@
+# The website gets its own namespace: nothing in it shares a database, a
+# secret or a policy with the design suite in `simorgh`.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: simorgh-website
+  labels:
+    app.kubernetes.io/part-of: simorgh-website
+    # Ambient mesh: ztunnel gives the gateway -> website hop mTLS and enforces
+    # the AuthorizationPolicy in 50-policies.yaml. No sidecars.
+    istio.io/dataplane-mode: ambient
+    # baseline, like the keycloak namespace: the Deployment istiod generates
+    # for the Gateway is not ours to harden. The website pod itself meets
+    # `restricted`, which audit/warn report on.
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
