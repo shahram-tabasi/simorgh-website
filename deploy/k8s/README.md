@@ -161,7 +161,7 @@ internet too, delete the `location ~ ^/(admin|api/admin)` block.
 
 | Type | Name | Value | Cloud (proxy) |
 |---|---|---|---|
-| A | `@` | `95.38.203.173` (the public IP in front of .68, as for `design`/`simorgh`) | **on** |
+| A | `@` | `217.219.39.211` (the public IP in front of .68, as for `design`/`simorgh`) | **on** |
 | CNAME | `www` | `simorghai.com` | **on** |
 
 **SSL/TLS**
