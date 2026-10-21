@@ -15,7 +15,11 @@ data:
   # content.json, uploads, backups and form submissions: the PVC in 20-storage.yaml.
   SIMORGH_STORAGE_DIR: /data
   ADMIN_USERNAME: admin
-  OPENAI_MODEL: gpt-4.1-mini
+  # The AI chat and on-the-fly translation run on the office's own LLM
+  # (simorgh-technical-chatbot-cloud, docs/LLM-API.md); its key is LLM_API_KEY
+  # in the Secret. The 27B answering at once, without visible thinking.
+  LLM_BASE_URL: https://llm.simorghai.com/v1
+  LLM_MODEL: qwen3.8-27b-nothink
   # Company email (docs/EMAIL-SETUP.fa.md). Leave as they are until mailcow runs.
   MAIL_DOMAIN: simorghai.com
   MAIL_HOST: mail.simorghai.com

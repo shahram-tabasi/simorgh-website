@@ -117,7 +117,8 @@ spec:
         - { protocol: TCP, port: 15008 }
 ---
 # The website's outbound, beyond DNS:
-#   443      - api.openai.com (AI chat and on-the-fly translation)
+#   443      - the office LLM, llm.simorghai.com = 192.168.1.127 (AI chat and
+#              on-the-fly translation), the only LAN address it may reach
 #   587, 465 - SMTP for contact / demo-request notifications
 # Internet only: the LAN and the cluster's own ranges are excluded, so a
 # compromised website cannot reach the databases or anything on 192.168.1.x.
@@ -140,6 +141,10 @@ spec:
         - { protocol: TCP, port: 443 }
         - { protocol: TCP, port: 587 }
         - { protocol: TCP, port: 465 }
+    - to:
+        - ipBlock: { cidr: 192.168.1.127/32 }
+      ports:
+        - { protocol: TCP, port: 443 }
     # If mailcow ends up on the LAN (MAILCOW_URL / SMTP_HOST pointing at a
     # 192.168.1.x address), open exactly that host here, for example:
     # - to:

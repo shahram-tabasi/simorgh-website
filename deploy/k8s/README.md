@@ -69,8 +69,19 @@ kubectl -n simorgh-website create secret generic simorgh-website-secrets \
   --from-literal=ADMIN_PASSWORD='CHANGE-ME-strong-password' \
   --from-literal=ADMIN_SECRET="$(openssl rand -hex 32)" \
   --from-literal=SMTP_PASS='' \
-  --from-literal=OPENAI_API_KEY='' \
+  --from-literal=LLM_API_KEY='' \
   --from-literal=MAILCOW_API_KEY=''
+```
+
+`LLM_API_KEY` is the site's key for the office LLM (AI chat and translation of
+new text), made once on the k8s master and printed once:
+
+```bash
+~/simorgh-technical-chatbot-cloud/deploy/scripts/llm-api-key.sh create website
+read -rsp "Paste the key it printed: " K; echo
+kubectl -n simorgh-website patch secret simorgh-website-secrets --type merge -p "{\"stringData\":{\"LLM_API_KEY\":\"$K\"}}"
+unset K
+kubectl -n simorgh-website rollout restart deploy/simorgh-website
 ```
 
 To change one later: `kubectl -n simorgh-website edit secret simorgh-website-secrets`
