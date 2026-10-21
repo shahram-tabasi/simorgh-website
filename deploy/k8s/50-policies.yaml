@@ -148,18 +148,18 @@ spec:
     # 192.168.1.127 is the LoadBalancer address of the LLM's own Gateway in
     # the cluster: Cilium hands the connection straight to that gateway pod,
     # so the packet's destination is the pod, not the LAN address above.
-    # Only the Gateway API pods of namespace simorgh-chatbot, nothing else
-    # there (443 the gateway, 15008 the ambient tunnel).
+    # Only that gateway, llm-api-gateway in simorgh-chatbot, nothing else
+    # there; it takes 443 from anyone and llm-gateway checks the site's key
+    # (simorgh-technical-chatbot-cloud docs/LLM-API.md).
     - to:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: simorgh-chatbot
           podSelector:
-            matchExpressions:
-              - { key: gateway.networking.k8s.io/gateway-name, operator: Exists }
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: llm-api-gateway
       ports:
         - { protocol: TCP, port: 443 }
-        - { protocol: TCP, port: 15008 }
     # If mailcow ends up on the LAN (MAILCOW_URL / SMTP_HOST pointing at a
     # 192.168.1.x address), open exactly that host here, for example:
     # - to:
