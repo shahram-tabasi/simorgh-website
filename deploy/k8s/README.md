@@ -74,15 +74,18 @@ kubectl -n simorgh-website create secret generic simorgh-website-secrets \
 ```
 
 `LLM_API_KEY` is the site's key for the office LLM (AI chat and translation of
-new text), made once on the k8s master and printed once:
+new text). Made on the k8s master and written straight into the Secret, never
+shown or pasted (a terminal paste can carry control characters):
 
 ```bash
-~/simorgh-technical-chatbot-cloud/deploy/scripts/llm-api-key.sh create website
-read -rsp "Paste the key it printed: " K; echo
-kubectl -n simorgh-website patch secret simorgh-website-secrets --type merge -p "{\"stringData\":{\"LLM_API_KEY\":\"$K\"}}"
+K=$(~/simorgh-technical-chatbot-cloud/deploy/scripts/llm-api-key.sh create website | awk '$1=="key:"{print $2}')
+[ -n "$K" ] && kubectl -n simorgh-website patch secret simorgh-website-secrets --type merge \
+  -p "{\"stringData\":{\"LLM_API_KEY\":\"$K\"}}" && echo "LLM key stored"
 unset K
 kubectl -n simorgh-website rollout restart deploy/simorgh-website
 ```
+
+A new key for the site: `llm-api-key.sh revoke website` first, then the above.
 
 To change one later: `kubectl -n simorgh-website edit secret simorgh-website-secrets`
 (values are base64), then `kubectl -n simorgh-website rollout restart deploy/simorgh-website`.
