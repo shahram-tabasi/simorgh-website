@@ -23,6 +23,11 @@ export async function llmChat(
       messages,
     }),
     signal: AbortSignal.timeout(options.timeoutMs ?? 90_000),
+  }).catch((error) => {
+    // "fetch failed" alone says nothing: name the cause (ETIMEDOUT, ENOTFOUND,
+    // ECONNREFUSED, a certificate error...).
+    const cause = error?.cause;
+    throw new Error(`LLM ${base} unreachable: ${cause?.code || error?.name || ''} ${cause?.message || error?.message || ''}`.trim());
   });
   if (!response.ok) {
     throw new Error(`LLM ${response.status}: ${(await response.text()).slice(0, 300)}`);
