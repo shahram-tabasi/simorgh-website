@@ -1,10 +1,34 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n';
 import { Send, X, Minus } from 'lucide-react';
 import Image from 'next/image';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type Message = { role: 'user' | 'assistant'; content: string };
+
+// The model's answers come as Markdown (bold, lists, links): shown as tidy
+// text in the bubble, never as raw ** and 1. marks. react-markdown builds
+// React elements and never renders HTML from the model.
+const answerParts: Components = {
+  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+  em: ({ children }) => <em className="text-ink">{children}</em>,
+  ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 ps-4 last:mb-0 marker:text-cyan/70">{children}</ul>,
+  ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 ps-4 last:mb-0 marker:text-cyan/70">{children}</ol>,
+  li: ({ children }) => <li className="ps-0.5">{children}</li>,
+  a: ({ href, children }) => {
+    const external = /^https?:\/\//.test(href || '') && !(href || '').includes('simorghai.com');
+    return <a href={href} className="text-cyan underline decoration-cyan/40 underline-offset-2 hover:decoration-cyan" {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{children}</a>;
+  },
+  code: ({ children }) => <code className="rounded bg-space-1 px-1 font-mono text-[12px] text-cyan-soft">{children}</code>,
+  // Headings and tables are asked against; if one comes, it stays modest.
+  h1: ({ children }) => <p className="mb-1 font-semibold text-white">{children}</p>,
+  h2: ({ children }) => <p className="mb-1 font-semibold text-white">{children}</p>,
+  h3: ({ children }) => <p className="mb-1 font-semibold text-white">{children}</p>,
+  hr: () => null,
+};
 
 export function SimorghAIChat() {
   const [open, setOpen] = useState(false);
@@ -26,6 +50,12 @@ export function SimorghAIChat() {
   };
   const copy = chatCopy[locale] || chatCopy.en;
   const [messages, setMessages] = useState<Message[]>([{ role: 'assistant', content: copy.initial }]);
+  // Follow the conversation: the newest message (or the "reading" line) in view.
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const list = listRef.current;
+    if (list) list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+  }, [messages, busy, open, minimized]);
   useEffect(() => { setMessages((current) => current.length === 1 && current[0].role === 'assistant' ? [{ role: 'assistant', content: copy.initial }] : current); }, [locale, copy.initial]);
 
   async function send() {
@@ -56,8 +86,8 @@ export function SimorghAIChat() {
           <div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/25 text-cyan"><Image src="/simorgh/logo-mark-192.png" alt="" width={192} height={129} className="h-auto w-6" /></div><div><div className="text-sm font-semibold text-white">{copy.title}</div><div className="font-mono text-[9px] tracking-[.12em] text-cyan/70">{copy.engine}</div></div></div>
           <div className="flex gap-1"><button onClick={() => setMinimized(v=>!v)} className="p-2 text-ink-faint hover:text-white" aria-label={copy.minimize}><Minus className="h-4 w-4"/></button><button onClick={() => setOpen(false)} className="p-2 text-ink-faint hover:text-white" aria-label={copy.close}><X className="h-4 w-4"/></button></div>
         </div>
-        {!minimized && <><div className="max-h-[430px] space-y-3 overflow-y-auto p-4">
-          {messages.map((m,i)=><div key={i} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}><div className={`max-w-[86%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${m.role==='user'?'bg-cyan/10 text-cyan-soft border border-cyan/15':'bg-space-2 text-ink-muted border border-line'}`}>{m.content}</div></div>)}
+        {!minimized && <><div ref={listRef} className="max-h-[430px] space-y-3 overflow-y-auto p-4">
+          {messages.map((m,i)=><div key={i} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}><div dir="auto" className={`max-w-[86%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${m.role==='user'?'bg-cyan/10 text-cyan-soft border border-cyan/15 whitespace-pre-wrap':'bg-space-2 text-ink-muted border border-line'}`}>{m.role==='assistant'?<ReactMarkdown remarkPlugins={[remarkGfm]} components={answerParts}>{m.content}</ReactMarkdown>:m.content}</div></div>)}
           {busy && <div className="text-xs text-ink-faint">{copy.busy}</div>}
         </div><div className="border-t border-line p-3"><div className="flex items-center gap-2 rounded-xl border border-line bg-space-2 p-2"><input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send()}} placeholder={copy.placeholder} className="min-w-0 flex-1 bg-transparent px-2 text-sm text-white outline-none placeholder:text-ink-faint"/><button onClick={send} disabled={busy||!input.trim()} className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan text-space-0 disabled:opacity-40"><Send className="h-4 w-4"/></button></div></div></>}
       </div>}
