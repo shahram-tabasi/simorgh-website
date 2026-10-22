@@ -88,7 +88,7 @@ export function SettingsEditor() {
         </Grid>
       </Card>
 
-      <Card title="ابزارهای گوگل و موتورهای جستجو" hint="کد تأیید را از Google Search Console (روش HTML tag)، Bing Webmaster و Yandex Webmaster بگیرید. می‌توانید کل تگ meta را هم بچسبانید.">
+      <Card title="ابزارهای گوگل و موتورهای جستجو" hint="بهترین روش برای گوگل، Domain property با رکورد TXT در DNS است (آروان و PowerDNS)؛ آن‌وقت این خانه لازم نیست. در غیر این صورت کد روش HTML tag را اینجا بگذارید. می‌توانید کل تگ meta را هم بچسبانید.">
         <Grid>
           <Text label="Google Search Console" value={draft.settings.verification.google} onChange={(v) => verify('google')(metaCode(v))} ltr />
           <Text label="Bing Webmaster" value={draft.settings.verification.bing} onChange={(v) => verify('bing')(metaCode(v))} ltr />
@@ -96,7 +96,7 @@ export function SettingsEditor() {
           <Text label="Google Analytics 4" value={draft.settings.gaId} onChange={(v) => s('gaId')(v.trim())} ltr placeholder="G-XXXXXXXXXX" />
         </Grid>
         <p className="text-[12px] leading-6 text-ink-faint">
-          بعد از تأیید در Search Console، نقشه سایت را ثبت کنید: <code dir="ltr" className="rounded bg-space-3 px-1.5">{(draft.settings.siteUrl || '').replace(/\/+$/, '')}/sitemap.xml</code>
+          بعد از تأیید در Search Console، نقشه سایت را ثبت کنید: <code dir="ltr" className="rounded bg-space-3 px-1.5">{(draft.settings.siteUrl || '').replace(/\/+$/, '')}/sitemap.xml</code> · خوراک RSS مقالات: <code dir="ltr" className="rounded bg-space-3 px-1.5">/insights/feed.xml</code>
         </p>
       </Card>
 

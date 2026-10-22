@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: c.settings.legalName }],
     creator: c.settings.legalName,
     publisher: c.settings.legalName,
-    alternates: { canonical: '/' },
+    alternates: { canonical: '/', types: { 'application/rss+xml': [{ url: '/insights/feed.xml', title: `${c.settings.siteName} Insights` }] } },
     openGraph: {
       type: 'website',
       siteName: c.settings.siteName,

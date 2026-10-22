@@ -119,7 +119,8 @@ spec:
 # The website's outbound, beyond DNS:
 #   443      - the office LLM, llm.simorghai.com = 192.168.1.127 (AI chat and
 #              on-the-fly translation), the only LAN address it may reach
-#   587, 465 - SMTP for contact / demo-request notifications
+#   587      - mailcow on .68 (mail.simorghai.com): notifications from the
+#              forms and comments, sent as noreply@ - the second LAN address
 #   8080     - Keycloak in the cluster (admin sign-in, realm website)
 # Internet only: the LAN and the cluster's own ranges are excluded, so a
 # compromised website cannot reach the databases or anything on 192.168.1.x.
@@ -173,13 +174,14 @@ spec:
       ports:
         - { protocol: TCP, port: 8080 }
         - { protocol: TCP, port: 15008 }
-    # If mailcow ends up on the LAN (MAILCOW_URL / SMTP_HOST pointing at a
-    # 192.168.1.x address), open exactly that host here, for example:
-    # - to:
-    #     - ipBlock: { cidr: 192.168.1.70/32 }
-    #   ports:
-    #     - { protocol: TCP, port: 587 }
-    #     - { protocol: TCP, port: 8080 }
+    # mailcow's submission port on .68, nothing else there: 443 on .68 is
+    # the edge nginx, which treats LAN callers as the office and would open
+    # internal sites to a compromised website. (Mailbox management from the
+    # admin panel would need it; mailboxes are made in mailcow instead.)
+    - to:
+        - ipBlock: { cidr: 192.168.1.68/32 }
+      ports:
+        - { protocol: TCP, port: 587 }
 ---
 # ── Istio (ambient) ─────────────────────────────────────────────────────────
 # Every meshed pod in this namespace accepts mTLS only.

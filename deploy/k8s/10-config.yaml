@@ -27,12 +27,19 @@ data:
   # in the Secret. The 27B answering at once, without visible thinking.
   LLM_BASE_URL: https://llm.simorghai.com/v1
   LLM_MODEL: qwen3.8-27b-nothink
-  # Company email (docs/EMAIL-SETUP.fa.md). Leave as they are until mailcow runs.
+  # Company email: mailcow on .68 (docs/SITE-SETUP.md). The site sends its
+  # notifications (contact and demo forms, comments, replies) as noreply@
+  # through mailcow's submission port; SMTP_PASS is in the Secret.
+  # mail.simorghai.com points at .68 inside the pod (hostAliases, 30-website.yaml).
   MAIL_DOMAIN: simorghai.com
   MAIL_HOST: mail.simorghai.com
-  MAIL_SERVER_IP: ""
+  # The office's public address: the admin's DNS page checks the mail records against it.
+  MAIL_SERVER_IP: "217.219.39.211"
+  # Mailbox management from the admin panel needs mailcow's API, which this
+  # pod is not allowed to reach (50-policies.yaml); mailboxes are made in mailcow.
   MAILCOW_URL: ""
   WEBMAIL_URL: https://mail.simorghai.com/SOGo/
   SMTP_HOST: mail.simorghai.com
   SMTP_PORT: "587"
   SMTP_USER: noreply@simorghai.com
+  SMTP_FROM: "SIMORGH <noreply@simorghai.com>"

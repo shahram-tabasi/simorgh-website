@@ -37,7 +37,7 @@ export function buildMetadata(c: SiteContent, b: Build): Metadata {
     title: title ? (/simorgh/i.test(title) ? { absolute: title } : title) : undefined,
     description,
     keywords: keywords || undefined,
-    alternates: { canonical: url },
+    alternates: { canonical: url, types: { 'application/rss+xml': [{ url: '/insights/feed.xml', title: `${c.settings.siteName} Insights` }] } },
     robots: b.seo?.noindex ? { index: false, follow: true } : undefined,
     openGraph: {
       type: b.type ?? 'website',

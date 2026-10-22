@@ -14,4 +14,4 @@ images:
   # Upgrade = build a new tag, change it here, apply again. Always a new tag:
   # the pod pulls IfNotPresent, so re-pushing the same tag changes nothing.
   - name: registry.simorghai.com/simorgh/simorgh-website
-    newTag: "1.1.4"
+    newTag: "1.1.5"

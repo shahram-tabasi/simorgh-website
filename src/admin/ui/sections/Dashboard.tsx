@@ -13,6 +13,8 @@ export function Dashboard() {
   const { draft: c } = useAdmin();
   const [requests, setRequests] = useState<Submission[] | null>(null);
   const [pendingComments, setPendingComments] = useState<number | null>(null);
+  const [googleDns, setGoogleDns] = useState(false);
+  useEffect(() => { fetch('/api/admin/seo').then((r) => (r.ok ? r.json() : null)).then((d) => setGoogleDns(!!d?.googleDns)).catch(() => {}); }, []);
   useEffect(() => { fetch('/api/admin/requests').then((r) => (r.ok ? r.json() : [])).then(setRequests).catch(() => setRequests([])); }, []);
   useEffect(() => {
     fetch('/api/admin/comments').then((r) => (r.ok ? r.json() : null))
@@ -30,7 +32,7 @@ export function Dashboard() {
   // What still keeps the site from its best search ranking.
   const issues: { text: string; href: string }[] = [];
   if (!c.settings.siteUrl || c.settings.siteUrl.includes('localhost')) issues.push({ text: 'آدرس اصلی سایت (دامنه) تنظیم نشده است.', href: '/admin/settings' });
-  if (!c.settings.verification.google) issues.push({ text: 'کد تأیید Google Search Console وارد نشده است.', href: '/admin/settings' });
+  if (!c.settings.verification.google && !googleDns) issues.push({ text: 'سایت در Google Search Console تأیید نشده است (رکورد TXT در DNS یا کد متا در تنظیمات).', href: '/admin/settings' });
   if (!c.settings.gaId) issues.push({ text: 'Google Analytics وصل نیست.', href: '/admin/settings' });
   for (const [key, info] of Object.entries(PAGE_INFO)) {
     const p = c.pages[key as keyof typeof c.pages];

@@ -35,6 +35,7 @@ export function expectedRecords(dkim: { selector: string; txt: string } | null):
     { type: 'CNAME', name: 'autodiscover', value: host, noProxy: true, purpose: 'تنظیم خودکار Outlook' },
     { type: 'CNAME', name: 'autoconfig', value: host, noProxy: true, purpose: 'تنظیم خودکار Thunderbird' },
     { type: 'SRV', name: '_autodiscover._tcp', value: `0 1 443 ${host}`, purpose: 'تنظیم خودکار ایمیل در موبایل و Outlook (اختیاری)' },
+    { type: 'TXT', name: '@', value: 'google-site-verification=…', purpose: 'Google Search Console (Domain property): مقدار را از Search Console بگیرید؛ در آروان و PowerDNS هر دو' },
     { type: 'PTR', name: IP, value: host, purpose: 'Reverse DNS — در پنل آروان نیست؛ از ارائه‌دهنده IP/دیتاسنتر بخواهید' },
   ];
 }
@@ -58,6 +59,7 @@ function matches(r: DnsRecord, found: string[], ipKnown: boolean) {
   if (r.type === 'MX') return found.some((f) => norm(f).endsWith(norm(r.value)));
   if (r.type === 'TXT' && r.value.startsWith('v=spf1')) return found.some((f) => norm(f).startsWith('v=spf1') && (norm(f).includes(' mx') || norm(f).includes(norm(r.value.split(' ')[2]))));
   if (r.type === 'TXT' && r.value.startsWith('v=DMARC1')) return found.some((f) => norm(f).startsWith('v=dmarc1'));
+  if (r.type === 'TXT' && r.value.startsWith('google-site-verification')) return found.some((f) => f.startsWith('google-site-verification='));
   if (r.type === 'TXT' && r.value.startsWith('v=DKIM1')) {
     const key = (s: string) => s.replace(/\s|"/g, '').match(/p=([^;]+)/)?.[1];
     return found.some((f) => key(f) === key(r.value));
@@ -77,4 +79,10 @@ export async function checkRecords(records: DnsRecord[]): Promise<DnsRecord[]> {
       return { ...r, status: 'missing' as const, found: [] };
     }
   }));
+}
+
+/** True when the domain has a Google Search Console TXT record (Domain property). */
+export async function googleDnsVerified() {
+  const { domain } = mailConfig();
+  try { return (await dns.resolveTxt(domain)).some((parts) => parts.join('').startsWith('google-site-verification=')); } catch { return false; }
 }

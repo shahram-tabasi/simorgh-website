@@ -90,6 +90,9 @@ A new key for the site: `llm-api-key.sh revoke website` first, then the above.
 To change one later: `kubectl -n simorgh-website edit secret simorgh-website-secrets`
 (values are base64), then `kubectl -n simorgh-website rollout restart deploy/simorgh-website`.
 
+`SMTP_PASS` (the `noreply@` mailbox in mailcow), Search Console and analytics:
+[docs/SITE-SETUP.md](../../docs/SITE-SETUP.md).
+
 ## 3. Data volume, then everything else
 
 ```bash
