@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   BoxIcon, ExternalLinkIcon, FactoryIcon, FileTextIcon, GaugeIcon, ImagesIcon, InboxIcon, LanguagesIcon,
-  LayersIcon, LayoutTemplateIcon, LogOutIcon, MailIcon, MenuIcon, SaveIcon, SettingsIcon, SparklesIcon, Undo2Icon, XIcon,
+  LayersIcon, LayoutTemplateIcon, LogOutIcon, MailIcon, MenuIcon, MessageCircleIcon, SaveIcon, SettingsIcon, SparklesIcon, Undo2Icon, XIcon,
 } from 'lucide-react';
 import { useAdmin } from './AdminStore';
 
@@ -19,6 +19,7 @@ const NAV = [
   { href: '/admin/sections', label: 'بخش‌های صفحه اصلی', icon: LayersIcon },
   { href: '/admin/media', label: 'کتابخانه رسانه', icon: ImagesIcon },
   { href: '/admin/requests', label: 'پیام‌ها و درخواست دمو', icon: InboxIcon },
+  { href: '/admin/comments', label: 'دیدگاه‌های مقالات', icon: MessageCircleIcon },
   { href: '/admin/mail', label: 'ایمیل سازمانی', icon: MailIcon },
   { href: '/admin/translations', label: 'ترجمه‌ها', icon: LanguagesIcon },
   { href: '/admin/settings', label: 'تنظیمات و سئو', icon: SettingsIcon },

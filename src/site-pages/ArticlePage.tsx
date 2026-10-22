@@ -12,6 +12,8 @@ import { PageHero } from '../components/ui/PageHero';
 import { Button } from '../components/ui/Button';
 import { getContent, toPublic } from '../content/store';
 import type { Article } from '../content/types';
+import { Comments } from '../components/comments/Comments';
+import type { Thread } from '../comments/store';
 
 function embedUrl(url: string) {
   const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{6,})/);
@@ -21,7 +23,7 @@ function embedUrl(url: string) {
   return null;
 }
 
-export async function ArticlePage({ article }: { article: Article }) {
+export async function ArticlePage({ article, thread }: { article: Article; thread: Thread }) {
   const content = toPublic(await getContent());
   const related = content.articles.filter((a) => a.slug !== article.slug).slice(0, 3);
   const embed = article.video ? embedUrl(article.video) : null;
@@ -66,10 +68,12 @@ export async function ArticlePage({ article }: { article: Article }) {
 
           <div className="mt-16 flex flex-col items-start justify-between gap-6 border border-line bg-space-1 p-8 sm:flex-row sm:items-center">
             <p className="max-w-md text-[14.5px] text-ink-muted">
-              Talk to the engineers behind the platform about your network, your plant or your city.
+              Talk to the engineers behind the platform about your organisation, your projects and your processes.
             </p>
             <Button to="/request-demo">Request a Demo</Button>
           </div>
+
+          <Comments slug={article.slug} title={article.title} initial={thread} />
         </div>
       </section>
 

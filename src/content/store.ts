@@ -62,7 +62,7 @@ export async function getContent(): Promise<SiteContent> {
   }
 }
 
-async function writeAtomic(file: string, data: string) {
+export async function writeAtomic(file: string, data: string) {
   await fs.mkdir(path.dirname(file), { recursive: true });
   const tmp = `${file}.${process.pid}.${Date.now()}.tmp`;
   await fs.writeFile(tmp, data, 'utf8');

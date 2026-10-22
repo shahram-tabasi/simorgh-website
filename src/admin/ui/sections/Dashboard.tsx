@@ -12,13 +12,18 @@ interface Submission { id: string; type: string; createdAt: string; status: stri
 export function Dashboard() {
   const { draft: c } = useAdmin();
   const [requests, setRequests] = useState<Submission[] | null>(null);
+  const [pendingComments, setPendingComments] = useState<number | null>(null);
   useEffect(() => { fetch('/api/admin/requests').then((r) => (r.ok ? r.json() : [])).then(setRequests).catch(() => setRequests([])); }, []);
+  useEffect(() => {
+    fetch('/api/admin/comments').then((r) => (r.ok ? r.json() : null))
+      .then((d) => setPendingComments(d ? d.comments.filter((x: { status: string }) => x.status === 'pending').length : 0)).catch(() => setPendingComments(0));
+  }, []);
 
   const live = <T extends { status?: string }>(xs: T[]) => xs.filter((x) => x.status !== 'draft').length;
   const stats = [
     { label: 'محصول منتشرشده', value: live(c.products), href: '/admin/products' },
     { label: 'مقاله منتشرشده', value: live(c.articles), href: '/admin/articles' },
-    { label: 'صنعت', value: live(c.industries), href: '/admin/industries' },
+    { label: 'دیدگاه در انتظار تأیید', value: pendingComments ?? '…', href: '/admin/comments' },
     { label: 'پیام جدید', value: requests ? requests.filter((r) => r.status === 'new').length : '…', href: '/admin/requests' },
   ];
 

@@ -2,6 +2,7 @@
 // products, articles, breadcrumbs and FAQs as rich results.
 
 import React from 'react';
+import type { Thread } from '../comments/store';
 import type { Article, ProductEntry, SiteContent } from '../content/types';
 import { absoluteUrl } from './metadata';
 
@@ -82,7 +83,7 @@ export function faqLd(items: { q: string; a: string }[]) {
   };
 }
 
-export function articleLd(c: SiteContent, a: Article) {
+export function articleLd(c: SiteContent, a: Article, thread?: Thread) {
   const image = a.seo.image || a.cover;
   return {
     '@context': 'https://schema.org',
@@ -99,5 +100,17 @@ export function articleLd(c: SiteContent, a: Article) {
     publisher: { '@id': absoluteUrl(c, '/#organization') },
     mainEntityOfPage: absoluteUrl(c, `/insights/${a.slug}`),
     articleSection: a.category,
+    commentCount: thread?.count || undefined,
+    // Up to 20 recent top-level comments, the way readers see them.
+    comment: thread?.comments.length
+      ? thread.comments.slice(0, 20).map((cm) => ({
+        '@type': 'Comment',
+        text: cm.text,
+        dateCreated: cm.createdAt,
+        url: absoluteUrl(c, `/insights/${a.slug}#comment-${cm.id}`),
+        author: cm.team ? { '@type': 'Organization', name: c.settings.siteName } : { '@type': 'Person', name: cm.name },
+      }))
+      : undefined,
+    interactionStatistic: thread?.likes ? { '@type': 'InteractionCounter', interactionType: 'https://schema.org/LikeAction', userInteractionCount: thread.likes } : undefined,
   };
 }
