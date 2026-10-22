@@ -162,12 +162,28 @@ cp simorghai-k8s.conf /etc/nginx/conf.d/simorghai-website.conf   # from deploy/n
 #   proxy_ssl_trusted_certificate to /etc/pki/tls/certs/ca-bundle.crt
 nginx -t && systemctl reload nginx
 curl -sI https://simorghai.com/ --resolve simorghai.com:443:127.0.0.1               # 200, served via .220
-curl -s  -o /dev/null -w '%{http_code}\n' https://simorghai.com/admin --resolve simorghai.com:443:127.0.0.1   # 404 (LAN-only)
+curl -s  -o /dev/null -w '%{http_code}\n' https://simorghai.com/admin --resolve simorghai.com:443:127.0.0.1   # 307 (to the login page)
 ```
 
-The admin panel is closed on the internet path by design; from the office it
-works at `https://simorghai.com/admin` (straight to .220). To open it to the
-internet too, delete the `location ~ ^/(admin|api/admin)` block.
+The admin panel signs in through Keycloak, realm `website` (its own realm:
+nothing shared with the staff apps or Kara), from the office and the internet
+alike:
+
+```bash
+# Once: the realm, the role website-admin and the client; its secret goes into this
+# namespace's Secret (ADMIN_OIDC_CLIENT_SECRET), and the site restarts to read it.
+deploy/keycloak/setup-website-realm.sh realm
+kubectl -n simorgh-website rollout restart deploy/simorgh-website
+
+# Each administrator (asks for their name and a first password; they set up an
+# authenticator app at first sign-in). Taking access away: … revoke EMAIL
+deploy/keycloak/setup-website-realm.sh admin someone@simorghai.com
+```
+
+From then on /admin shows one button, "ورود با حساب سیمرغ"; the shared
+ADMIN_PASSWORD no longer works. Wrong passwords lock the account for a while
+(growing to 15 minutes). A forgotten password or a lost phone: reset them in
+the Keycloak console, realm website → Users → the person → Credentials.
 
 ## 8. ArvanCloud (panel → domain simorghai.com)
 

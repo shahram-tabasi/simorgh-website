@@ -36,8 +36,10 @@ export function AdminShell({ user, children }: { user: string; children: React.R
 
   const logout = async () => {
     if (dirty && !confirm('تغییرات ذخیره‌نشده از بین می‌رود. خارج می‌شوید؟')) return;
-    await fetch('/api/admin/logout', { method: 'POST' });
-    window.location.href = '/admin/login';
+    const res = await fetch('/api/admin/logout', { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    // With Keycloak sign-in, end that session too (it comes back to /admin/login).
+    window.location.href = data.logoutUrl || '/admin/login';
   };
 
   const nav = (

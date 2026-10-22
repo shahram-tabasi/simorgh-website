@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
-import { SESSION_COOKIE, SESSION_HOURS, adminConfigured, createToken, safeEqual } from '@/src/admin/session';
+import { SESSION_COOKIE, SESSION_HOURS, adminConfigured, createToken, oidcLogin, passwordLogin, safeEqual } from '@/src/admin/session';
 
 // A few wrong passwords per address and minute, then a pause.
 const attempts = new Map<string, { n: number; until: number }>();
 
 export async function POST(req: Request) {
-  if (!adminConfigured()) {
+  if (oidcLogin()) {
+    // Signing in is through Keycloak now; the shared password is off.
+    return NextResponse.json({ error: 'oidc-only' }, { status: 403 });
+  }
+  if (!adminConfigured() || !passwordLogin()) {
     return NextResponse.json({ error: 'not-configured' }, { status: 503 });
   }
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'local';

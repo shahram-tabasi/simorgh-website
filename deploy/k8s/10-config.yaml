@@ -15,6 +15,13 @@ data:
   # content.json, uploads, backups and form submissions: the PVC in 20-storage.yaml.
   SIMORGH_STORAGE_DIR: /data
   ADMIN_USERNAME: admin
+  # /admin sign-in through Keycloak, realm `website` (deploy/keycloak/setup-website-realm.sh):
+  # its own users, the role website-admin, lockout and two-step codes. Active once
+  # ADMIN_OIDC_CLIENT_SECRET is in the Secret; the shared ADMIN_PASSWORD is then off.
+  ADMIN_OIDC_ISSUER: https://auth.simorghai.com/realms/website
+  ADMIN_OIDC_INTERNAL_URL: http://keycloak.keycloak.svc.cluster.local:8080/realms/website
+  ADMIN_OIDC_CLIENT_ID: simorgh-website
+  ADMIN_OIDC_ROLE: website-admin
   # The AI chat and on-the-fly translation run on the office's own LLM
   # (simorgh-technical-chatbot-cloud, docs/LLM-API.md); its key is LLM_API_KEY
   # in the Secret. The 27B answering at once, without visible thinking.

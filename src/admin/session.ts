@@ -6,6 +6,8 @@
 //   ADMIN_USERNAME=admin
 //   ADMIN_PASSWORD=<a long password>
 //   ADMIN_SECRET=<a long random string>   (optional; derived from the password if absent)
+// or, instead of the shared password, sign-in through Keycloak (src/admin/oidc.ts),
+// which needs ADMIN_SECRET.
 
 export const SESSION_COOKIE = 'simorgh_admin';
 export const SESSION_HOURS = 12;
@@ -24,8 +26,18 @@ function fromB64url(s: string) {
   return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 }
 
+/** Keycloak sign-in configured (see src/admin/oidc.ts); kept here so middleware need not import jose. */
+export function oidcLogin() {
+  return Boolean(process.env.ADMIN_OIDC_ISSUER && process.env.ADMIN_OIDC_CLIENT_ID && process.env.ADMIN_OIDC_CLIENT_SECRET);
+}
+
+/** The shared password works only while Keycloak sign-in is not configured. */
+export function passwordLogin() {
+  return !oidcLogin() && Boolean(process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length >= 8);
+}
+
 export function adminConfigured() {
-  return Boolean(process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length >= 8);
+  return passwordLogin() || (oidcLogin() && Boolean(process.env.ADMIN_SECRET && process.env.ADMIN_SECRET.length >= 32));
 }
 
 async function key() {

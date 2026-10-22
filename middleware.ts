@@ -2,10 +2,12 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { SESSION_COOKIE, verifyToken } from './src/admin/session';
 
 // Everything under /admin and /api/admin needs a valid admin session,
-// except the login page and the login endpoint themselves.
+// except the login page, the login endpoint and the Keycloak sign-in routes.
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  if (pathname === '/admin/login' || pathname === '/api/admin/login') return NextResponse.next();
+  if (pathname === '/admin/login' || pathname === '/api/admin/login' || pathname.startsWith('/api/admin/oidc/')) {
+    return NextResponse.next();
+  }
 
   const session = await verifyToken(req.cookies.get(SESSION_COOKIE)?.value);
   if (session) return NextResponse.next();

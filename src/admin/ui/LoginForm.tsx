@@ -1,10 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LockIcon } from 'lucide-react';
 import { inputCls } from './fields';
 
-export function LoginForm({ configured }: { configured: boolean }) {
+const OIDC_ERRORS: Record<string, string> = {
+  forbidden: 'این حساب دسترسی مدیریت سایت ندارد.',
+  cancelled: 'ورود لغو شد.',
+  expired: 'زمان ورود گذشت؛ دوباره امتحان کنید.',
+  failed: 'ورود ممکن نشد؛ کمی بعد دوباره امتحان کنید.',
+  'not-configured': 'ورود با حساب سیمرغ روی سرور تنظیم نشده است.',
+};
+
+/** Sign-in through Keycloak (realm website): one button. */
+function OidcLogin() {
+  // Read after mounting, so the server's HTML and the browser's agree.
+  const [{ error, href }, setState] = useState({ error: '', href: '/api/admin/oidc/login' });
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get('next');
+    setState({ error: params.get('error') || '', href: `/api/admin/oidc/login${next ? `?next=${encodeURIComponent(next)}` : ''}` });
+  }, []);
+  return (
+    <div className="grid gap-4 rounded-xl border border-line bg-space-1/90 p-6">
+      <p className="text-center text-[13px] leading-7 text-ink-muted">ورود مدیران با حساب سیمرغ و کد دومرحله‌ای انجام می‌شود.</p>
+      {error && <p role="alert" className="text-center text-[12.5px] text-red-300">{OIDC_ERRORS[error] || OIDC_ERRORS.failed}</p>}
+      <a href={href} className="inline-flex items-center justify-center gap-2 rounded-md bg-cyan py-2.5 text-[14px] font-semibold text-space-0 hover:bg-cyan-soft">
+        <LockIcon className="h-4 w-4" />ورود با حساب سیمرغ
+      </a>
+    </div>
+  );
+}
+
+export function LoginForm({ configured, oidc = false }: { configured: boolean; oidc?: boolean }) {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -42,7 +70,9 @@ export function LoginForm({ configured }: { configured: boolean }) {
           <p className="mt-1 text-[12.5px] text-ink-faint">برای ویرایش سایت وارد شوید</p>
         </div>
 
-        {!configured ? (
+        {oidc && configured ? (
+          <OidcLogin />
+        ) : !configured ? (
           <div className="rounded-xl border border-gold/30 bg-gold/5 p-5 text-[13px] leading-7 text-ink-muted">
             <p className="font-semibold text-gold">پنل هنوز فعال نشده است.</p>
             <p className="mt-2">در پوشه اصلی پروژه روی سرور فایل <code dir="ltr" className="rounded bg-space-3 px-1">.env.local</code> بسازید:</p>
