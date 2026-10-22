@@ -61,7 +61,7 @@ and replies to readers, as `noreply@simorghai.com`, through mailcow on .68
    ```bash
    read -rsp "noreply@ password: " P; echo
    [ -n "$P" ] && kubectl -n simorgh-website patch secret simorgh-website-secrets --type merge \
-     -p "$(jq -nc --arg p "$P" '{stringData:{SMTP_PASS:$p}}')" && echo "stored"
+     -p "{\"data\":{\"SMTP_PASS\":\"$(printf %s "$P" | base64 -w0)\"}}" && echo "stored"
    unset P
    kubectl -n simorgh-website rollout restart deploy/simorgh-website
    ```
