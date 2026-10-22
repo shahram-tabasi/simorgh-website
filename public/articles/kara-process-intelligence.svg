@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="Inter, 'Segoe UI', system-ui, sans-serif">
+  <title>Process intelligence in Simorgh Kara</title>
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1330"/><stop offset="1" stop-color="#05080f"/></linearGradient>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2ad3f0"/></marker>
+  </defs>
+  <rect width="1200" height="520" rx="18" fill="url(#bg2)"/>
+  <text x="40" y="52" fill="#7ce6f7" font-size="15" letter-spacing="3">SIMORGH KARA · FROM EVERYDAY WORK TO DECISIONS</text>
+
+  <g font-size="14" fill="#e7edff">
+    <rect x="40" y="96" width="250" height="300" rx="14" fill="#101a3a" stroke="#2ad3f0" stroke-opacity=".45"/>
+    <text x="60" y="126" fill="#7ce6f7" font-size="12" letter-spacing="2">WHERE THE LOG COMES FROM</text>
+    <text x="60" y="162" font-weight="600">Kartabl tasks</text>
+    <text x="60" y="182" fill="#9fb0d8" font-size="12.5">who · created · started · done</text>
+    <text x="60" y="222" font-weight="600">BPMN process engine</text>
+    <text x="60" y="242" fill="#9fb0d8" font-size="12.5">one case id per instance</text>
+    <text x="60" y="282" font-weight="600">ERP events (Odoo)</text>
+    <text x="60" y="302" fill="#9fb0d8" font-size="12.5">offer sent · order confirmed ·</text>
+    <text x="60" y="320" fill="#9fb0d8" font-size="12.5">production done</text>
+    <text x="60" y="358" font-weight="600">Attendance and shifts</text>
+    <text x="60" y="378" fill="#9fb0d8" font-size="12.5">real resource calendars</text>
+  </g>
+  <path d="M292 245 H352" stroke="#2ad3f0" stroke-width="2" marker-end="url(#b)"/>
+
+  <g font-size="14" fill="#e7edff">
+    <rect x="360" y="150" width="200" height="190" rx="14" fill="#0f2147"/>
+    <text x="460" y="186" text-anchor="middle" font-weight="600">Event log</text>
+    <text x="460" y="208" text-anchor="middle" fill="#9fb0d8" font-size="12.5">per process and period,</text>
+    <text x="460" y="226" text-anchor="middle" fill="#9fb0d8" font-size="12.5">personal sign-in only</text>
+    <line x1="385" y1="250" x2="535" y2="250" stroke="#2ad3f0" stroke-opacity=".3"/>
+    <text x="460" y="280" text-anchor="middle" font-weight="600">SIMOD discovery</text>
+    <text x="460" y="302" text-anchor="middle" fill="#9fb0d8" font-size="12.5">on our own cluster:</text>
+    <text x="460" y="320" text-anchor="middle" fill="#9fb0d8" font-size="12.5">no data leaves</text>
+  </g>
+  <path d="M562 245 H622" stroke="#2ad3f0" stroke-width="2" marker-end="url(#b)"/>
+
+  <g font-size="14" fill="#e7edff">
+    <rect x="630" y="96" width="270" height="300" rx="14" fill="#0d2a33" stroke="#2ad3f0"/>
+    <text x="650" y="126" fill="#7ce6f7" font-size="12" letter-spacing="2">PROCESS LAB</text>
+    <text x="650" y="162" font-weight="600">Discovered vs designed</text>
+    <text x="650" y="182" fill="#9fb0d8" font-size="12.5">skipped steps, rework, shortcuts</text>
+    <text x="650" y="222" font-weight="600">Baseline simulation</text>
+    <text x="650" y="242" fill="#9fb0d8" font-size="12.5">calibrated on your own past</text>
+    <text x="650" y="282" font-weight="600">What-if scenarios</text>
+    <text x="650" y="302" fill="#9fb0d8" font-size="12.5">+1 engineer · new approval rule ·</text>
+    <text x="650" y="320" fill="#9fb0d8" font-size="12.5">second shift · faster suppliers</text>
+    <text x="650" y="358" font-weight="600">Lead-time distributions</text>
+    <text x="650" y="378" fill="#9fb0d8" font-size="12.5">side by side, assumptions noted</text>
+  </g>
+  <path d="M902 245 H962" stroke="#2ad3f0" stroke-width="2" marker-end="url(#b)"/>
+
+  <g font-size="14" fill="#e7edff">
+    <rect x="970" y="150" width="190" height="190" rx="14" fill="#101a3a" stroke="#5b6b95"/>
+    <text x="1065" y="186" text-anchor="middle" font-weight="600">Decision</text>
+    <text x="1065" y="208" text-anchor="middle" fill="#9fb0d8" font-size="12.5">change the BPMN model</text>
+    <text x="1065" y="226" text-anchor="middle" fill="#9fb0d8" font-size="12.5">the engine runs</text>
+    <line x1="995" y1="250" x2="1135" y2="250" stroke="#2ad3f0" stroke-opacity=".3"/>
+    <text x="1065" y="280" text-anchor="middle" font-weight="600">Check next quarter</text>
+    <text x="1065" y="302" text-anchor="middle" fill="#9fb0d8" font-size="12.5">did the prediction</text>
+    <text x="1065" y="320" text-anchor="middle" fill="#9fb0d8" font-size="12.5">hold?</text>
+  </g>
+  <path d="M1065 342 V450 H165 V398" fill="none" stroke="#2ad3f0" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#b)"/>
+  <text x="600" y="476" text-anchor="middle" fill="#9fb0d8" font-size="13">the new log measures the change: a closed improvement loop</text>
+</svg>

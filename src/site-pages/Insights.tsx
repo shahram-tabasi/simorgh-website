@@ -7,15 +7,17 @@ import { PageHero } from '../components/ui/PageHero';
 import { Reveal } from '../components/ui/Reveal';
 import { useContent } from '../content/ContentProvider';
 
-const categories = ['All', 'AI', 'Industrial AI', 'Digital Twin', 'Smart Grid', 'Engineering', 'Software'];
-
 export function Insights() {
   const { pages, articles: insights } = useContent();
   const [category, setCategory] = useState('All');
+  const categories = useMemo(
+    () => ['All', ...Array.from(new Set(insights.map((i) => i.category).filter(Boolean)))],
+    [insights]
+  );
 
   const filtered = useMemo(
     () => category === 'All' ? insights : insights.filter((i) => i.category === category),
-    [category]
+    [category, insights]
   );
 
   return (

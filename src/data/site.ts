@@ -29,10 +29,10 @@ export const navigation: NavItem[] = [
   label: 'Solutions',
   to: '/solutions',
   children: [
-  { label: 'Engineering Automation', to: '/solutions', note: 'Document to design, without transcription.' },
-  { label: 'Energy Intelligence', to: '/solutions', note: 'Network awareness for distribution operators.' },
-  { label: 'Urban Digital Twin', to: '/solutions', note: 'Scenario analysis for city infrastructure.' },
-  { label: 'Industrial Safety', to: '/solutions', note: 'Vision-assisted compliance at site level.' }]
+  { label: 'Multi-company organisation', to: '/solutions', note: 'One screen for every company you run.' },
+  { label: 'Specification to EPLAN', to: '/solutions', note: 'Document to design, without transcription.' },
+  { label: 'Knowledge that answers', to: '/solutions', note: 'Your documents, answered with citations.' },
+  { label: 'Process intelligence', to: '/solutions', note: 'Test changes on a calibrated model first.' }]
 
 },
 {

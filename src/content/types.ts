@@ -152,6 +152,8 @@ export interface SiteContent {
   aiLayers: { title: string; body: string }[];
   /** Translation overrides and additions, per language: English text → translation. */
   translations: Record<string, Record<string, string>>;
+  /** Content migrations already applied (./migrations.ts). */
+  migrations?: string[];
 }
 
 /** What the site's pages get on the client: everything but the long article bodies. */

@@ -15,54 +15,40 @@ import { ProductPreview } from '../components/product/ProductPreview';
 import { useContent } from '../content/ContentProvider';
 
 const previewRows: Record<string, {label: string;value: string;state?: 'ok' | 'warn' | 'alert';}[]> = {
-  'simorgh-design-suite': [
-  { label: 'Documents ingested', value: '1,284 files' },
-  { label: 'Equipment resolved', value: '3,911 objects', state: 'ok' },
-  { label: 'Low-confidence regions', value: '17 flagged', state: 'warn' },
-  { label: 'SLD revision', value: 'R04 · generated' },
-  { label: 'Standards applied', value: 'IEC + company' }],
-
-  'simorgh-grid': [
-  { label: 'Feeders monitored', value: '412' },
-  { label: 'Events last hour', value: '11,940' },
-  { label: 'Ranked incidents', value: '6', state: 'ok' },
-  { label: 'Probable fault section', value: 'F-217 / SP-4', state: 'alert' },
-  { label: 'Recommended action', value: 'Isolate + backfeed' }],
-
-  'simorgh-digital-twin': [
-  { label: 'Bound layers', value: '9 / 9', state: 'ok' },
-  { label: 'Spatial objects', value: '1.4M' },
-  { label: 'Telemetry streams', value: '8,220' },
-  { label: 'Active scenario', value: '2046 load growth' },
-  { label: 'Capacity breach', value: 'District 7 · 2031', state: 'warn' }],
-
   'simorgh-kara': [
-  { label: 'Sites active', value: '11' },
-  { label: 'Personnel on site', value: '2,043' },
-  { label: 'PPE exceptions', value: '4 open', state: 'warn' },
-  { label: 'Restricted-zone entries', value: '0 unauthorised', state: 'ok' },
-  { label: 'Permits expiring', value: '9 in 24h' }],
+  { label: 'Companies', value: '3 in one group' },
+  { label: 'Open tasks in my kartabl', value: '7', state: 'warn' },
+  { label: 'Offer OFF-1042', value: 'Costing · day 2' },
+  { label: 'ERP sync', value: 'Up to date', state: 'ok' },
+  { label: 'Call', value: 'Project room · 4 people' }],
 
-  'simorgh-shop': [
-  { label: 'Open projects', value: '38' },
-  { label: 'Committed cost', value: '€ 12.4M' },
-  { label: 'Long-lead items', value: '22 tracked', state: 'warn' },
-  { label: 'Stock reserved', value: '1,708 lines' },
-  { label: 'Close status', value: 'Day 3 · on track', state: 'ok' }],
+  'simorgh-design-suite': [
+  { label: 'Project', value: 'MV switchgear · 24 panels' },
+  { label: 'Documents read', value: 'Spec, SLD, load list' },
+  { label: 'Values to review', value: '12 low confidence', state: 'warn' },
+  { label: 'Rule checks', value: 'Passed', state: 'ok' },
+  { label: 'Export', value: 'EPLAN project ready' }],
 
-  'simorgh-draw': [
-  { label: 'Drawing', value: 'SLD-MV-014 · R02' },
-  { label: 'Objects', value: '486 typed' },
-  { label: 'Rule violations', value: '0 open', state: 'ok' },
-  { label: 'Open markups', value: '3' },
-  { label: 'Library', value: 'IEC 60617 v12' }],
+  'simorgh-engineering-ai': [
+  { label: 'Question', value: 'IP rating, outdoor kiosk?' },
+  { label: 'Sources', value: '3 pages cited', state: 'ok' },
+  { label: 'Library', value: 'Standards + project docs' },
+  { label: 'Runs on', value: 'Your servers' },
+  { label: 'Answer language', value: 'Persian or English' }],
+
+  'simorgh-hr-assistant': [
+  { label: 'Question', value: 'Annual leave carry-over?' },
+  { label: 'Source', value: 'HR policy §4.2', state: 'ok' },
+  { label: 'Knowledge base', value: 'Policies + FAQs' },
+  { label: 'Unanswered', value: 'Sent to HR', state: 'warn' },
+  { label: 'Data', value: 'Stays in the company' }],
 
   'simorgh-cloud': [
-  { label: 'Served models', value: '14 versions' },
-  { label: 'Pipelines healthy', value: '31 / 31', state: 'ok' },
-  { label: 'Knowledge index', value: '4.2M nodes' },
-  { label: 'Deployment', value: 'Private · sovereign' },
-  { label: 'Audit coverage', value: '100% inferences', state: 'ok' }]
+  { label: 'Sign-in', value: 'Single sign-on', state: 'ok' },
+  { label: 'Hosting', value: 'Private · on-premises' },
+  { label: 'Models', value: 'Local LLM' },
+  { label: 'Backups', value: 'Daily', state: 'ok' },
+  { label: 'Audit', value: 'Every sign-in logged' }]
 
 };
 
@@ -115,7 +101,7 @@ export function ProductDetail({ slug }: { slug: string }) {
           <Reveal delay={0.06}>
             <ProductPreview
               name={`${product.short.toUpperCase()} · WORKSPACE`}
-              caption="Representative interface state. Every value shown resolves to its source record."
+              caption="Illustrative workspace state with example data."
               rows={rows} />
             
           </Reveal>

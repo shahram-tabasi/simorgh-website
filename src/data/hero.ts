@@ -62,7 +62,7 @@ export const heroSlides: HeroSlide[] = [
   subtitle:
   'GIS, infrastructure, telemetry and system dynamics bound into one environment where interventions are tested before they are funded.',
   kicker: 'GIS · IoT · SYSTEM DYNAMICS · SCENARIO ANALYSIS',
-  primaryCta: { label: 'Explore Digital Twin', to: '/products/simorgh-digital-twin' },
+  primaryCta: { label: 'Explore Simorgh Kara', to: '/products/simorgh-kara' },
   secondaryCta: { label: 'Request a Demo', to: '/request-demo' },
   overlay: 0.6,
   media: {

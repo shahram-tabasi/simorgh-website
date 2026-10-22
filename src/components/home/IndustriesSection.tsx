@@ -20,7 +20,7 @@ export function IndustriesSection() {
       <div className="mx-auto max-w-shell px-5 py-24 lg:px-10 lg:py-32">
         <Reveal>
           <SectionHeader
-            index="05 / INDUSTRIES"
+            index="06 / INDUSTRIES"
             title="Intelligence for Real-World Systems"
             lead="Every deployment is bound to physical assets, regulatory reality and an operations team that has to defend its decisions." />
           

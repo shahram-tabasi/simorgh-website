@@ -13,6 +13,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { defaultContent } from './defaults';
+import { migrate } from './migrations';
 import type { Article, PublicContent, SiteContent } from './types';
 
 export const STORAGE_DIR = path.resolve(process.env.SIMORGH_STORAGE_DIR || path.join(process.cwd(), 'storage'));
@@ -36,14 +37,23 @@ function merge<T>(base: T, over: unknown): T {
 }
 
 let cache: { mtime: number; content: SiteContent } | null = null;
+// A migration in progress: concurrent first requests wait for the same save.
+let migrating: Promise<SiteContent> | null = null;
 
 export async function getContent(): Promise<SiteContent> {
   let stat;
-  try { stat = await fs.stat(CONTENT_FILE); } catch { return defaultContent(); }
+  try { stat = await fs.stat(CONTENT_FILE); } catch { return migrate(defaultContent()).content; }
   if (cache && cache.mtime === stat.mtimeMs) return cache.content;
   try {
     const stored = JSON.parse(await fs.readFile(CONTENT_FILE, 'utf8'));
-    const content = merge(defaultContent(), stored);
+    const { content, applied } = migrate(merge(defaultContent(), stored));
+    if (applied.length) {
+      // Saved once (with a backup of what it replaced), so the admin sees and edits the result.
+      migrating ??= saveContent(content)
+        .then((saved) => { console.log(`[content] applied migrations: ${applied.join(', ')}`); return saved; })
+        .finally(() => { migrating = null; });
+      return migrating;
+    }
     cache = { mtime: stat.mtimeMs, content };
     return content;
   } catch (error) {

@@ -9,33 +9,34 @@ import { useContent } from '../content/ContentProvider';
 
 const solutions = [
 {
-  title: 'Engineering Automation',
-  problem: 'Engineers spend more time transcribing documents than designing systems.',
-  approach: 'Design Suite and Draw turn specifications into typed engineering models, generate single line diagrams and validate against standards before review.',
-  products: ['Design Suite', 'Draw', 'Cloud'],
+  title: 'Run a multi-company organisation',
+  problem: 'Holding groups and virtual enterprises run each company on its own spreadsheets, e-mail threads and ERP screens, so nobody sees the whole.',
+  approach: 'Kara gives every person one sign-in, one work queue and one directory across all companies, with sales, procurement, production and after-sales running as processes on the ERP behind it.',
+  products: ['Kara', 'Cloud'],
+  to: '/products/simorgh-kara'
+},
+{
+  title: 'From specification to EPLAN',
+  problem: 'Electrical engineers spend days transcribing tender documents into panel layouts and single line diagrams.',
+  approach: 'Design Suite reads the specification, proposes the design, checks it against your rules and exports to EPLAN; the Engineering AI answers questions over the project documents.',
+  products: ['Design Suite', 'Engineering AI'],
   to: '/products/simorgh-design-suite'
 },
 {
-  title: 'Energy Intelligence',
-  problem: 'Control rooms receive thousands of undifferentiated signals during an event.',
-  approach: 'Grid builds a live network model, correlates events by topology, localises probable fault sections and proposes restoration sequencing with evidence.',
-  products: ['Grid', 'Digital Twin', 'Cloud'],
-  to: '/products/simorgh-grid'
+  title: 'Knowledge that answers back',
+  problem: 'Standards, procedures and HR policies sit in folders nobody reads, so the same questions reach the same few people every day.',
+  approach: 'The Engineering AI and HR Assistant answer from your own documents, cite the page they used and run on your own servers, so nothing leaves the company.',
+  products: ['Engineering AI', 'HR Assistant'],
+  to: '/products/simorgh-engineering-ai'
 },
 {
-  title: 'Urban Digital Twin',
-  problem: 'Capital decisions are made on spreadsheets that cannot model feedback.',
-  approach: 'Digital Twin binds GIS, infrastructure, telemetry and system dynamics so interventions can be compared over a twenty-year horizon.',
-  products: ['Digital Twin', 'Grid', 'Cloud'],
-  to: '/products/simorgh-digital-twin'
-},
-{
-  title: 'Industrial Safety & Workforce',
-  problem: 'Site supervision cannot be everywhere, and compliance evidence arrives late.',
-  approach: 'Kara combines presence, permits and vision-based PPE monitoring, surfacing only exceptions and tracking each to closure.',
-  products: ['Kara', 'Shop', 'Cloud'],
-  to: '/products/simorgh-kara'
+  title: 'Process intelligence and what-if',
+  problem: 'Managers change approval rules, staffing and shifts on intuition, and learn months later whether it helped.',
+  approach: 'Kara records every task with who did it and when; that event log feeds process discovery and simulation (SIMOD), so changes are tested on a calibrated model first.',
+  products: ['Kara', 'Process Lab'],
+  to: '/insights/business-process-simulation-simod-kara'
 }];
+
 
 
 export function Solutions() {
@@ -45,7 +46,7 @@ export function Solutions() {
       <PageHero
         eyebrow="SOLUTIONS"
         title="Problems first, products second"
-        lead="Four recurring problems across the sectors SIMORGH works in, and the combination of products that addresses each."
+        lead="Four recurring problems in engineering and multi-company organisations, and the products that address each."
         crumbs={[{ label: 'Solutions' }]}
         image={pages.solutions.heroImage}
         flip={pages.solutions.heroFlip} />

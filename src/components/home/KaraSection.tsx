@@ -9,14 +9,14 @@ import { Starfield } from '../ui/Starfield';
 import { REF_IMAGE_PLANET } from '../../data/site';
 import { useContent } from '../../content/ContentProvider';
 
-export function DigitalTwinSection() {
+export function KaraSection() {
   const { products } = useContent();
-  const twin = products.find((p) => p.slug === 'simorgh-digital-twin');
-  const layers = twin?.pipeline ?? [];
+  const kara = products.find((p) => p.slug === 'simorgh-kara');
+  const layers = kara?.pipeline ?? [];
   const [active, setActive] = useState(layers.length - 1);
 
   return (
-    <section className="relative w-full overflow-hidden border-t border-line bg-space-0" aria-label="Digital twin">
+    <section className="relative w-full overflow-hidden border-t border-line bg-space-0" aria-label="Simorgh Kara">
       <div className="absolute inset-x-0 bottom-0 h-[60%]">
         <img src={REF_IMAGE_PLANET} alt="" aria-hidden="true" loading="lazy" className="h-full w-full object-cover opacity-55" />
         <div className="absolute inset-0 bg-gradient-to-t from-space-0 via-space-0/70 to-space-0" />
@@ -26,9 +26,9 @@ export function DigitalTwinSection() {
       <div className="relative mx-auto max-w-shell px-5 py-24 lg:px-10 lg:py-32">
         <Reveal>
           <SectionHeader
-            index="06 / DIGITAL TWIN"
-            title="The model of the real system, queryable about the future"
-            lead="Nine layers bind a city or an industrial site into one environment: spatial data, physical assets, live telemetry, learned behaviour and the feedback dynamics that connect them." />
+            index="05 / SIMORGH KARA"
+            title="One organisation, many companies, one screen"
+            lead="Kara binds people, work, business records, documents and conversations of a multi-company organisation into one platform, with the ERP running quietly behind it." />
           
         </Reveal>
 
@@ -78,12 +78,12 @@ export function DigitalTwinSection() {
               </h3>
               <p className="mt-4 text-[14.5px] leading-relaxed text-ink-muted">{layers[active]?.detail}</p>
               <p className="mt-8 border-t border-line pt-6 text-[13px] leading-relaxed text-ink-faint">
-                Integration boundaries are defined, not simulated: IoT brokers, streaming pipelines, GIS servers,
-                knowledge graphs and external twin engines each connect through a documented interface.
+                Every layer runs on your own servers: single sign-on, an event bus between the ERP and the
+                work queues, and documented interfaces for whatever comes next.
               </p>
             </div>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Button to="/products/simorgh-digital-twin">Explore Digital Twin</Button>
+              <Button to="/products/simorgh-kara">Explore Simorgh Kara</Button>
               <Button to="/request-demo" variant="outline">
                 Request a Demo
               </Button>
